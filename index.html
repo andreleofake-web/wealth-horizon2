@@ -2082,9 +2082,18 @@ function attachTravelFundChartHover(canvasId, popoverId){
   canvas.addEventListener("mouseleave", clear);
   canvas.addEventListener("touchstart", function(e){ if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
   canvas.addEventListener("touchmove", function(e){ if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-  canvas.addEventListener("touchend", clear);
+  /* touchend intentionally does NOT clear: on mobile there's no hover, so
+     lifting the finger would otherwise close the popover before it can be
+     read. Instead it stays pinned (like the nest-egg goal popover) until
+     the user taps elsewhere or presses Escape. Desktop is unaffected —
+     mouseleave above still clears on real hover-out. */
+  document.addEventListener("click", function(e){
+    if (openFormulaMonthKey && e.target !== canvas && !popover.contains(e.target)){
+      clear();
+    }
+  });
   document.addEventListener("keydown", function(e){
-    if (e.key === "Escape" && openFormulaMonthKey) hideTravelFundPopover(popover);
+    if (e.key === "Escape" && openFormulaMonthKey) clear();
   });
 }
 

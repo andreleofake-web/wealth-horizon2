@@ -306,6 +306,9 @@ canvas{width:100%;height:230px;display:block;cursor:crosshair;}
   box-shadow:var(--shadow);padding:14px 18px;width:360px;max-height:340px;overflow-y:auto;
   transform:translateX(-50%);
 }
+@media (max-width:480px){
+  .formula-popover{width:218px;padding:12px 12px;}
+}
 .formula-popover .formula-close{
   position:absolute;top:7px;right:7px;background:none;border:none;color:var(--ink-dim);
   cursor:pointer;font-size:16px;line-height:1;padding:5px;border-radius:6px;
@@ -926,6 +929,10 @@ async function ghLoad(){
     if (!parsed || !parsed.income || !parsed.accounts){ setGhStatus("error"); return; }
     var pre = deepClone(state);
     state = migrateState(parsed);
+    /* a synced snapshot carries whatever "as of" date was true when it was
+       saved — re-snap to today so the charts anchor to the real calendar
+       instead of reverting to that stale date on every sync pull */
+    state.meta.asOf = todayISO();
     pushUndoIfChanged(pre);
     render();
     saveLocalOnly();
@@ -1753,7 +1760,11 @@ function drawChart(canvas, projection, goals, currentValue, monthTicks){
   var goalMarkers = [];
   goals.forEach(function(g){
     var gx = xPx(num(g.year) + 1);
-    if (gx < padL - 20 || gx > W - padR + 20) return;
+    /* a goal's target date is Dec 31 of g.year, plotted at Jan 1 of the
+       next year (gx); once that's at or before "now" (padL, the chart's
+       left edge) the goal's year has fully elapsed, so it no longer
+       belongs on this forward-looking projection */
+    if (gx <= padL || gx > W - padR + 20) return;
     var gy = yPx(num(g.amount));
     var color = warning;
     if (g.actual !== null && g.actual !== undefined && g.actual !== ""){
@@ -2326,6 +2337,9 @@ function importBackup(e){
       if (parsed && parsed.income && parsed.accounts){
         var pre = deepClone(state);
         state = migrateState(parsed);
+        /* re-snap to today, same reasoning as ghLoad() — a backup file
+           carries whatever date was true when it was exported */
+        state.meta.asOf = todayISO();
         pushUndo(pre);
         render(); persist();
       }

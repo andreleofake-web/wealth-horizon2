@@ -644,7 +644,7 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
       </div>
       <div class="chart-canvas-wrap">
         <canvas id="chart-travelfund"></canvas>
-        <div class="formula-popover" id="formula-popover-travelfund"></div>
+        <div class="chart-tooltip" id="tt-travelfund"><div class="tt-value"></div><div class="tt-date"></div></div>
       </div>
       <div class="assumptions">
         <div class="field"><label class="field-label">Current amount</label><input class="field-input" type="text" id="tf-currentamount"></div>
@@ -1389,7 +1389,7 @@ function render(){
     if (negCanvas._chartMeta) refreshOpenFormulaPopover(negCanvas, negCanvas._chartMeta.goalMarkers);
     var tfCanvas = el("chart-travelfund");
     drawChart(tfCanvas, c.travelFund, [], c.travelFund.current, true);
-    if (tfCanvas._chartMeta) refreshOpenTravelFundPopover(tfCanvas, tfCanvas._chartMeta.monthMarkers);
+    if (tfCanvas._chartMeta) refreshOpenTravelFundTooltip(tfCanvas, tfCanvas._chartMeta.monthMarkers);
   });
 }
 
@@ -2080,48 +2080,24 @@ function attachChartClick(canvasId, popoverId){
   });
 }
 
-/* ---------- travel fund month-tick popover ----------
-   Parallel to the goal-marker popover above, but keyed on a "year-month"
-   string instead of a goal id, and built from a single monthly series
-   point rather than a reconstructed year-by-year FV chain. */
+/* ---------- travel fund month-tick tooltip ----------
+   Same compact value + date tooltip as the Nest egg chart (the inputs it
+   would otherwise repeat are right below the chart), but snapped to the
+   month-end ticks and keyed on a "year-month" string so it can stay
+   pinned on mobile and follow re-renders. */
 var openFormulaMonthKey = null;
 var monthNamesShort = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-function explainTravelFundCalculation(point){
-  var tf = state.travelFund;
-  return {
-    year: point.year, month: point.month, day: point.day, balance: point.balance,
-    currentAmount: num(tf.currentAmount),
-    monthlyContribution: num(tf.monthlyContribution),
-    ratePct: num(tf.annualRatePct),
-    spendPct: num(tf.spendFractionPct)
-  };
-}
-
-function buildTravelFundFormulaHTML(result){
-  var html = '<button type="button" class="formula-close" aria-label="Close">&times;</button>';
-  html += '<div class="formula-title">' + monthNamesShort[result.month - 1] + ' ' + result.day + ', ' + result.year + '</div>';
-  html += '<div class="formula-divider"></div>';
-  html += '<div class="formula-row"><span>Starting amount</span><span>' + money(result.currentAmount) + '</span></div>';
-  html += '<div class="formula-row"><span>Monthly contribution</span><span>' + money(result.monthlyContribution) + '</span></div>';
-  html += '<div class="formula-row"><span>Growth rate</span><span>' + result.ratePct + '%/yr</span></div>';
-  html += '<div class="formula-row"><span>Spent per year</span><span>' + result.spendPct + '%</span></div>';
-  html += '<div class="formula-divider"></div>';
-  html += '<div class="formula-row result"><span>Projected balance</span><span>' + money(result.balance) + '</span></div>';
-  return html;
-}
-
-function showTravelFundPopover(canvas, popover, point, px, py){
-  var result = explainTravelFundCalculation(point);
-  popover.innerHTML = buildTravelFundFormulaHTML(result);
-  popover.querySelector(".formula-close").addEventListener("click", function(){ hideTravelFundPopover(popover); });
-  popover.style.display = "block";
-  positionFormulaPopover(canvas, popover, px, py);
+function showTravelFundTooltip(canvas, tooltip, point, px, py){
+  tooltip.querySelector(".tt-value").textContent = money(point.balance);
+  tooltip.querySelector(".tt-date").textContent = monthNamesShort[point.month - 1] + " " + point.year;
+  tooltip.style.display = "block";
+  positionChartTooltip(canvas, tooltip, px, py);
   openFormulaMonthKey = point.year + "-" + point.month;
 }
 
-function hideTravelFundPopover(popover){
-  popover.style.display = "none";
+function hideTravelFundTooltip(tooltip){
+  tooltip.style.display = "none";
   openFormulaMonthKey = null;
 }
 
@@ -2168,23 +2144,20 @@ function drawTravelFundHighlight(canvas, meta, marker){
   ctx.restore();
 }
 
-function refreshOpenTravelFundPopover(canvas, monthMarkers){
+function refreshOpenTravelFundTooltip(canvas, monthMarkers){
   if (!openFormulaMonthKey) return;
-  var popover = canvas.parentElement.querySelector(".formula-popover");
-  if (!popover || popover.style.display === "none") return;
+  var tooltip = canvas.parentElement.querySelector(".chart-tooltip");
+  if (!tooltip || tooltip.style.display === "none") return;
   var marker = monthMarkers.filter(function(m){ return (m.point.year + "-" + m.point.month) === openFormulaMonthKey; })[0];
-  if (!marker){ hideTravelFundPopover(popover); return; }
+  if (!marker){ hideTravelFundTooltip(tooltip); return; }
   drawTravelFundHighlight(canvas, canvas._chartMeta, marker);
-  var result = explainTravelFundCalculation(marker.point);
-  popover.innerHTML = buildTravelFundFormulaHTML(result);
-  popover.querySelector(".formula-close").addEventListener("click", function(){ hideTravelFundPopover(popover); });
-  positionFormulaPopover(canvas, popover, marker.px, marker.py);
+  showTravelFundTooltip(canvas, tooltip, marker.point, marker.px, marker.py);
 }
 
-function attachTravelFundChartHover(canvasId, popoverId){
+function attachTravelFundChartHover(canvasId, tooltipId){
   var canvas = el(canvasId);
-  var popover = el(popoverId);
-  if (!canvas || !popover) return;
+  var tooltip = el(tooltipId);
+  if (!canvas || !tooltip) return;
 
   function showAt(clientX, clientY){
     var meta = canvas._chartMeta;
@@ -2197,13 +2170,13 @@ function attachTravelFundChartHover(canvasId, popoverId){
     if (openFormulaMonthKey === key) return;
     drawChart(canvas, meta.projection, [], meta.currentValue, true);
     drawTravelFundHighlight(canvas, meta, marker);
-    showTravelFundPopover(canvas, popover, marker.point, marker.px, marker.py);
+    showTravelFundTooltip(canvas, tooltip, marker.point, marker.px, marker.py);
   }
 
   function clear(){
     var meta = canvas._chartMeta;
     if (meta) drawChart(canvas, meta.projection, [], meta.currentValue, true);
-    hideTravelFundPopover(popover);
+    hideTravelFundTooltip(tooltip);
   }
 
   canvas.addEventListener("mousemove", function(e){ showAt(e.clientX, e.clientY); });
@@ -2211,12 +2184,12 @@ function attachTravelFundChartHover(canvasId, popoverId){
   canvas.addEventListener("touchstart", function(e){ if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
   canvas.addEventListener("touchmove", function(e){ if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
   /* touchend intentionally does NOT clear: on mobile there's no hover, so
-     lifting the finger would otherwise close the popover before it can be
+     lifting the finger would otherwise close the tooltip before it can be
      read. Instead it stays pinned (like the nest-egg goal popover) until
      the user taps elsewhere or presses Escape. Desktop is unaffected —
      mouseleave above still clears on real hover-out. */
   document.addEventListener("click", function(e){
-    if (openFormulaMonthKey && e.target !== canvas && !popover.contains(e.target)){
+    if (openFormulaMonthKey && e.target !== canvas && !tooltip.contains(e.target)){
       clear();
     }
   });
@@ -2275,6 +2248,12 @@ function handleChartHover(canvas, tooltip, clientX, clientY){
   tooltip.style.display = "block";
   tooltip.querySelector(".tt-value").textContent = money(val);
   tooltip.querySelector(".tt-date").textContent = formatXAsMonthYear(dataX);
+  positionChartTooltip(canvas, tooltip, px, py);
+}
+
+/* places a .chart-tooltip above canvas point (px, py), kept inside the card */
+function positionChartTooltip(canvas, tooltip, px, py){
+  var rect = canvas.getBoundingClientRect();
   var wrapRect = canvas.parentElement.getBoundingClientRect();
   var left = rect.left - wrapRect.left + px;
   var top = rect.top - wrapRect.top + py;
@@ -2480,7 +2459,7 @@ bindStatic();
 renderUndoButton();
 attachChartHover("chart-nestegg", "tt-nestegg");
 attachChartClick("chart-nestegg", "formula-popover-nestegg");
-attachTravelFundChartHover("chart-travelfund", "formula-popover-travelfund");
+attachTravelFundChartHover("chart-travelfund", "tt-travelfund");
 render();
 saveLocalOnly();
 initGhSync();

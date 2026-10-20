@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "asOf": "2026-10-20"
+  },
+  "income": {
+    "pensionVA": 8700,
+    "salary1st": 3960,
+    "salary2nd": 3960
+  },
+  "withhold": {
+    "pay1Invest": 8700,
+    "pay2Invest": 0
+  },
+  "expenses": [
+    {
+      "id": "gm7rxufnpsw",
+      "name": "Rent and utilities",
+      "amount": 1050
+    },
+    {
+      "id": "4jze29rnpsw",
+      "name": "Car payment",
+      "amount": 540
+    },
+    {
+      "id": "808933gnpsw",
+      "name": "Phones + internet",
+      "amount": 325
+    },
+    {
+      "id": "q97p55knpsw",
+      "name": "Car insurance",
+      "amount": 160
+    },
+    {
+      "id": "mlsyiohnpsw",
+      "name": "Gym",
+      "amount": 410
+    },
+    {
+      "id": "ec4qo4unpsw",
+      "name": "Travel fund - Robinhood",
+      "amount": 1500
+    }
+  ],
+  "investments": [
+    {
+      "id": "fq24vvmnpsw",
+      "name": "401(k) contribution",
+      "amount": 2800
+    },
+    {
+      "id": "ww6hyv3npsw",
+      "name": "Stock issuance",
+      "amount": 6000
+    }
+  ],
+  "accounts": [
+    {
+      "id": "7wf0oa2npsw",
+      "name": "NFCU Money Market Savings",
+      "current": 8500,
+      "previous": 7500,
+      "liquid": true
+    },
+    {
+      "id": "9foad0tnpsw",
+      "name": "Robinhood",
+      "current": 308500,
+      "previous": 305250,
+      "liquid": true
+    },
+    {
+      "id": "ue3uib5npsw",
+      "name": "Acorns",
+      "current": 18150,
+      "previous": 18000,
+      "liquid": true
+    },
+    {
+      "id": "u02ukmdnpsw",
+      "name": "Vanguard Roth IRA",
+      "current": 160500,
+      "previous": 159000,
+      "liquid": false
+    },
+    {
+      "id": "3k422jhnpsw",
+      "name": "TSP Combine Roth/Traditional",
+      "current": 271000,
+      "previous": 267000,
+      "liquid": false
+    },
+    {
+      "id": "6ymvy7hnpsw",
+      "name": "Fidelity 401k",
+      "current": 8500,
+      "previous": 7000,
+      "liquid": false
+    }
+  ],
+  "accountsGroups": {
+    "liquidExpanded": false,
+    "nonLiquidExpanded": false
+  },
+  "travelFund": {
+    "currentAmount": 0,
+    "monthlyContribution": 1500,
+    "annualRatePct": 3.5,
+    "spendFractionPct": 50
+  },
+  "nestEgg": {
+    "rate": 7.5,
+    "pastGoalsExpanded": false,
+    "rateOverrides": [],
+    "goals": [
+      {
+        "id": "2qvmnzbnpsw",
+        "year": 2023,
+        "amount": 405000,
+        "actual": 410790
+      },
+      {
+        "id": "p2lm67hnpsw",
+        "year": 2024,
+        "amount": 500000,
+        "actual": 499230
+      },
+      {
+        "id": "whb7kcpnpsw",
+        "year": 2025,
+        "amount": 630000,
+        "actual": 635000
+      },
+      {
+        "id": "91o3r90npsw",
+        "year": 2026,
+        "amount": 800000,
+        "actual": null
+      },
+      {
+        "id": "3elpuodnpsw",
+        "year": 2027,
+        "amount": 1000000,
+        "actual": null
+      },
+      {
+        "id": "796kqlwnpsw",
+        "year": 2028,
+        "amount": 1270000,
+        "actual": null
+      },
+      {
+        "id": "dmc50dlnpsw",
+        "year": 2029,
+        "amount": 1500000,
+        "actual": null
+      },
+      {
+        "id": "4125n9nnpsw",
+        "year": 2030,
+        "amount": 1780000,
+        "actual": null
+      }
+    ]
+  }
+}

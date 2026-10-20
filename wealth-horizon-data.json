@@ -13,95 +13,95 @@
   },
   "expenses": [
     {
-      "id": "gm7rxufnpsw",
+      "id": "q9z91jwikk3",
       "name": "Rent and utilities",
       "amount": 1000
     },
     {
-      "id": "4jze29rnpsw",
+      "id": "lnrydxiikk3",
       "name": "Car payment",
       "amount": 540
     },
     {
-      "id": "808933gnpsw",
+      "id": "8sybmzuikk3",
       "name": "Phones + internet",
       "amount": 325
     },
     {
-      "id": "q97p55knpsw",
+      "id": "cg3nirpikk3",
       "name": "Car insurance",
       "amount": 160
     },
     {
-      "id": "mlsyiohnpsw",
+      "id": "s4x7otsikk3",
       "name": "Gym",
       "amount": 100
     },
     {
-      "id": "ec4qo4unpsw",
+      "id": "ejtyt0hikk3",
       "name": "Travel fund - Robinhood",
       "amount": 1500
     }
   ],
   "investments": [
     {
-      "id": "fq24vvmnpsw",
+      "id": "0gz1trrikk3",
       "name": "401(k) contribution",
       "amount": 2800
     }
   ],
   "accounts": [
     {
-      "id": "7wf0oa2npsw",
+      "id": "4rryk9mikk3",
       "name": "NFCU Money Market Savings",
       "current": 8500,
       "previous": 7500,
       "liquid": true
     },
     {
-      "id": "9foad0tnpsw",
+      "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 313500,
-      "previous": 308500,
+      "current": 314500,
+      "previous": 314250,
       "liquid": true
     },
     {
-      "id": "ue3uib5npsw",
+      "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 18150,
-      "previous": 18000,
+      "current": 17900,
+      "previous": 18050,
       "liquid": true
     },
     {
-      "id": "u02ukmdnpsw",
+      "id": "mh3194oikk3",
       "name": "Vanguard Roth IRA",
-      "current": 155800,
-      "previous": 160500,
+      "current": 156550,
+      "previous": 157000,
       "liquid": false
     },
     {
-      "id": "3k422jhnpsw",
+      "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 262000,
-      "previous": 271000,
+      "current": 262045,
+      "previous": 265045,
       "liquid": false
     },
     {
-      "id": "6ymvy7hnpsw",
+      "id": "0j4hq6bikk3",
       "name": "Fidelity 401k",
       "current": 13800,
-      "previous": 8500,
+      "previous": 13500,
       "liquid": false
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": true,
+    "liquidExpanded": false,
     "nonLiquidExpanded": true
   },
   "travelFund": {
-    "currentAmount": 3003,
+    "currentAmount": 3004,
     "monthlyContribution": 1500,
-    "annualRatePct": 3.5,
+    "annualRatePct": 3.25,
     "spendFractionPct": 50
   },
   "nestEgg": {
@@ -110,51 +110,51 @@
     "rateOverrides": [],
     "goals": [
       {
-        "id": "2qvmnzbnpsw",
+        "id": "rtp6nskikk3",
         "year": 2023,
         "amount": 405000,
         "actual": 410790
       },
       {
-        "id": "p2lm67hnpsw",
+        "id": "fhj157uikk3",
         "year": 2024,
         "amount": 500000,
         "actual": 499230
       },
       {
-        "id": "whb7kcpnpsw",
+        "id": "eggwpajikk3",
         "year": 2025,
         "amount": 630000,
         "actual": 635000
       },
       {
-        "id": "91o3r90npsw",
+        "id": "1koxutoikk3",
         "year": 2026,
-        "amount": 800000,
+        "amount": 815000,
         "actual": null
       },
       {
-        "id": "3elpuodnpsw",
+        "id": "0e7l8wyikk3",
         "year": 2027,
-        "amount": 1000000,
+        "amount": 1015000,
         "actual": null
       },
       {
-        "id": "796kqlwnpsw",
+        "id": "198v8y8ikk3",
         "year": 2028,
-        "amount": 1270000,
+        "amount": 1255000,
         "actual": null
       },
       {
-        "id": "dmc50dlnpsw",
+        "id": "nf63a8oikk3",
         "year": 2029,
         "amount": 1500000,
         "actual": null
       },
       {
-        "id": "4125n9nnpsw",
+        "id": "2t0qbixikk3",
         "year": 2030,
-        "amount": 1780000,
+        "amount": 1765000,
         "actual": null
       }
     ]

@@ -48,11 +48,6 @@
       "id": "fq24vvmnpsw",
       "name": "401(k) contribution",
       "amount": 2800
-    },
-    {
-      "id": "ww6hyv3npsw",
-      "name": "Stock issuance",
-      "amount": 6000
     }
   ],
   "accounts": [
@@ -66,8 +61,8 @@
     {
       "id": "9foad0tnpsw",
       "name": "Robinhood",
-      "current": 308500,
-      "previous": 305250,
+      "current": 313500,
+      "previous": 308500,
       "liquid": true
     },
     {
@@ -94,24 +89,24 @@
     {
       "id": "6ymvy7hnpsw",
       "name": "Fidelity 401k",
-      "current": 8500,
-      "previous": 7000,
+      "current": 13800,
+      "previous": 8500,
       "liquid": false
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": false,
-    "nonLiquidExpanded": false
+    "liquidExpanded": true,
+    "nonLiquidExpanded": true
   },
   "travelFund": {
-    "currentAmount": 0,
+    "currentAmount": 3003,
     "monthlyContribution": 1500,
     "annualRatePct": 3.5,
     "spendFractionPct": 50
   },
   "nestEgg": {
     "rate": 7.5,
-    "pastGoalsExpanded": false,
+    "pastGoalsExpanded": true,
     "rateOverrides": [],
     "goals": [
       {

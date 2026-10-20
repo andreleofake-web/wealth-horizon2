@@ -8,14 +8,14 @@
     "salary2nd": 3960
   },
   "withhold": {
-    "pay1Invest": 8700,
-    "pay2Invest": 0
+    "pay1Invest": 8800,
+    "pay2Invest": 100
   },
   "expenses": [
     {
       "id": "gm7rxufnpsw",
       "name": "Rent and utilities",
-      "amount": 1050
+      "amount": 1000
     },
     {
       "id": "4jze29rnpsw",
@@ -35,7 +35,7 @@
     {
       "id": "mlsyiohnpsw",
       "name": "Gym",
-      "amount": 410
+      "amount": 100
     },
     {
       "id": "ec4qo4unpsw",
@@ -75,15 +75,15 @@
     {
       "id": "u02ukmdnpsw",
       "name": "Vanguard Roth IRA",
-      "current": 160500,
-      "previous": 159000,
+      "current": 155800,
+      "previous": 160500,
       "liquid": false
     },
     {
       "id": "3k422jhnpsw",
       "name": "TSP Combine Roth/Traditional",
-      "current": 271000,
-      "previous": 267000,
+      "current": 262000,
+      "previous": 271000,
       "liquid": false
     },
     {
@@ -106,7 +106,7 @@
   },
   "nestEgg": {
     "rate": 7.5,
-    "pastGoalsExpanded": true,
+    "pastGoalsExpanded": false,
     "rateOverrides": [],
     "goals": [
       {

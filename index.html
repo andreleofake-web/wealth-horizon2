@@ -1026,6 +1026,49 @@ function formatInt(n){
   return Math.round(num(n)).toLocaleString("en-US");
 }
 
+/* ---------- select-on-focus ----------
+   Tapping into a number box selects its whole value, so typing replaces
+   it outright. Skipped while preserveFocus is re-focusing a rebuilt row
+   mid-edit (restoringFocus), or every keystroke would re-select. The
+   mouseup that follows a tap would otherwise collapse the selection back
+   to a caret, so the first one after focus is swallowed. */
+var restoringFocus = false;
+function selectOnFocus(inputEl){
+  inputEl.addEventListener("focus", function(){
+    if (restoringFocus) return;
+    inputEl._selectPending = true;
+    /* the deferred re-select must not fire once typing has started, or it
+       would swallow the first keystroke */
+    var valueAtFocus = inputEl.value;
+    var selectAll = function(){
+      if (document.activeElement === inputEl && inputEl.value === valueAtFocus){ try { inputEl.select(); } catch(e){} }
+    };
+    selectAll();
+    setTimeout(selectAll, 0);
+    setTimeout(function(){ inputEl._selectPending = false; }, 400);
+  });
+  inputEl.addEventListener("mouseup", function(e){
+    if (inputEl._selectPending){ e.preventDefault(); inputEl._selectPending = false; }
+  });
+}
+/* For year boxes: typing is kept as raw text (see preserveFocus rawFields),
+   and leaving one empty puts back the year it had when focused rather than
+   saving year 0. */
+function attachYearInput(inputEl, getYear, setYear){
+  selectOnFocus(inputEl);
+  trackFieldUndo(inputEl);
+  inputEl.addEventListener("focus", function(){
+    if (!restoringFocus) inputEl._yearAtFocus = getYear();
+  });
+  inputEl.addEventListener("input", function(e){ setYear(num(e.target.value)); render(); persist(); });
+  inputEl.addEventListener("blur", function(){
+    if (inputEl.value.trim() === "" && inputEl._yearAtFocus !== undefined) setYear(inputEl._yearAtFocus);
+    /* deferred so the box being tapped next exists before rows re-sort;
+       preserveFocus then carries that focus across the rebuild */
+    setTimeout(function(){ render(); persist(); }, 0);
+  });
+}
+
 /* ---------- comma-formatted number inputs ----------
    Reformats with thousands separators as the user types, keeping the
    caret positioned after the same digit (not raw character) it followed
@@ -1033,7 +1076,13 @@ function formatInt(n){
 function attachMoneyInput(inputEl, opts){
   opts = opts || {};
   inputEl.setAttribute("inputmode", "numeric");
+  selectOnFocus(inputEl);
   trackFieldUndo(inputEl, opts.onCommit);
+  /* an emptied box stays empty while you type (counted as 0); it only
+     shows "0" once you leave it */
+  inputEl.addEventListener("blur", function(){
+    if (!opts.allowEmpty && !/[0-9]/.test(inputEl.value)) inputEl.value = "0";
+  });
   inputEl.addEventListener("input", function(e){
     var raw = e.target.value;
     var caret = e.target.selectionStart;
@@ -1043,7 +1092,7 @@ function attachMoneyInput(inputEl, opts){
     var isEmpty = digits === "";
     var n = isEmpty ? 0 : parseInt(digits, 10);
     if (neg) n = -n;
-    var formatted = (isEmpty && opts.allowEmpty) ? (neg ? "-" : "") : n.toLocaleString("en-US");
+    var formatted = isEmpty ? (neg ? "-" : "") : n.toLocaleString("en-US");
     e.target.value = formatted;
     var pos = 0, count = 0;
     while (pos < formatted.length && count < digitsBeforeCaret){
@@ -1051,7 +1100,7 @@ function attachMoneyInput(inputEl, opts){
       pos++;
     }
     e.target.setSelectionRange(pos, pos);
-    if (opts.onChange) opts.onChange(isEmpty && opts.allowEmpty ? null : n);
+    if (opts.onChange) opts.onChange(isEmpty ? (opts.allowEmpty ? null : 0) : n);
   });
 }
 function setMoneyValue(id, n){
@@ -1089,7 +1138,8 @@ function preserveFocus(container, moneyFields, rebuildFn, rawFields){
         /* the exact pre-rebuild string, for plain (non-money) decimal
            fields — rebuilding from the parsed state number would strip
            an in-progress trailing "." and knock the caret out of place */
-        rawValue: isRaw ? active.value : null,
+        rawValue: (isRaw || (isMoney && !/[0-9]/.test(active.value))) ? active.value : null,
+        allSelected: active.value.length > 0 && active.selectionStart === 0 && active.selectionEnd === active.value.length,
         digitsBeforeCaret: isMoney ? active.value.slice(0, active.selectionStart).replace(/[^0-9]/g, "").length : null
       };
     }
@@ -1100,8 +1150,11 @@ function preserveFocus(container, moneyFields, rebuildFn, rawFields){
     var newInput = newRow ? newRow.querySelector('[data-field="' + restore.field + '"]') : null;
     if (newInput){
       if (restore.rawValue !== null) newInput.value = restore.rawValue;
-      newInput.focus();
-      if (restore.digitsBeforeCaret !== null){
+      restoringFocus = true;
+      try { newInput.focus(); } finally { restoringFocus = false; }
+      if (restore.allSelected){
+        try { newInput.setSelectionRange(0, newInput.value.length); } catch(e){}
+      } else if (restore.digitsBeforeCaret !== null){
         var val = newInput.value, pos = 0, count = 0;
         while (pos < val.length && count < restore.digitsBeforeCaret){
           if (/[0-9]/.test(val[pos])) count++;
@@ -1178,9 +1231,17 @@ function rateForYear(year){
   return override ? num(override.rate) : num(state.nestEgg.rate);
 }
 
-function nestEggProjection(years){
-  years = years || 10;
+/* The projection runs through the last goal's year, so the chart's width is
+   spent on the years that actually have goals; with no upcoming goals it
+   shows a default 5-year view. Capped so a typo like "20300" can't build
+   a giant series. */
+function nestEggProjection(){
   var ap = asOfParts();
+  var lastGoalYear = state.nestEgg.goals.reduce(function(m, g){
+    var y = num(g.year);
+    return (y >= ap.year && y <= ap.year + 60) ? Math.max(m, y) : m;
+  }, 0);
+  var years = lastGoalYear ? lastGoalYear - ap.year + 1 : 5;
   var monthlyInvest = (num(state.withhold.pay1Invest) + num(state.withhold.pay2Invest) + investmentsLineTotal());
   var current = state.accounts.reduce(function(s,a){ return s + num(a.current); }, 0);
 
@@ -1553,11 +1614,11 @@ function renderRateOverrides(){
         '<input type="text" inputmode="numeric" data-field="year" value="' + ov.year + '">' +
         '<input type="text" inputmode="decimal" data-field="rate" value="' + ov.rate + '">' +
         '<button class="remove-row" title="Remove">&times;</button>';
-      var ovYearInput = row.querySelector('[data-field="year"]');
       var ovRateInput = row.querySelector('[data-field="rate"]');
-      trackFieldUndo(ovYearInput);
+      attachYearInput(row.querySelector('[data-field="year"]'),
+        function(){ return ov.year; }, function(y){ ov.year = y; });
+      selectOnFocus(ovRateInput);
       trackFieldUndo(ovRateInput);
-      ovYearInput.addEventListener("input", function(e){ ov.year = num(e.target.value); render(); persist(); });
       ovRateInput.addEventListener("input", function(e){ ov.rate = num(e.target.value); render(); persist(); });
       row.querySelector(".remove-row").addEventListener("click", function(){
         var pre = deepClone(state);
@@ -1568,7 +1629,7 @@ function renderRateOverrides(){
       });
       wrap.appendChild(row);
     });
-  }, ["rate"]);
+  }, ["year", "rate"]);
 }
 
 function buildGoalRow(goal, c){
@@ -1588,9 +1649,8 @@ function buildGoalRow(goal, c){
     '<div class="goal-status-row">' +
       '<button class="remove-row" title="Remove">&times;</button>' +
     '</div>';
-  var goalYearInput = row.querySelector('[data-field="year"]');
-  trackFieldUndo(goalYearInput);
-  goalYearInput.addEventListener("input", function(e){ goal.year = num(e.target.value); render(); persist(); });
+  attachYearInput(row.querySelector('[data-field="year"]'),
+    function(){ return goal.year; }, function(y){ goal.year = y; });
   attachMoneyInput(row.querySelector('[data-field="amount"]'), { onChange: function(n){ goal.amount = n; render(); persist(); } });
   attachMoneyInput(row.querySelector('[data-field="actual"]'), { allowEmpty: true, onChange: function(n){ goal.actual = n; render(); persist(); } });
   /* re-render on blur so a goal that just became resolved (or unresolved)
@@ -1606,6 +1666,7 @@ function buildGoalRow(goal, c){
   return row;
 }
 
+var frozenGoalOrder = null;
 function renderNestEggGoals(c){
   var goals = state.nestEgg.goals;
   var wrap = el("nestegg-goals");
@@ -1632,7 +1693,20 @@ function renderNestEggGoals(c){
       return;
     }
 
-    var sorted = goals.slice().sort(function(a,b){ return num(a.year) - num(b.year); });
+    /* while a row is being edited, keep the order it had when editing
+       began — re-sorting by a half-typed year ("2", "20"...) would move
+       the row out from under the keyboard */
+    var editingYearOf = (pinnedId && activeEl.getAttribute("data-field") === "year") ? pinnedId : null;
+    var sorted;
+    if (editingYearOf && frozenGoalOrder && frozenGoalOrder.rowId === editingYearOf){
+      sorted = goals.slice().sort(function(a,b){
+        var ia = frozenGoalOrder.ids.indexOf(a.id), ib = frozenGoalOrder.ids.indexOf(b.id);
+        return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib);
+      });
+    } else {
+      sorted = goals.slice().sort(function(a,b){ return num(a.year) - num(b.year); });
+      frozenGoalOrder = editingYearOf ? { rowId: editingYearOf, ids: sorted.map(function(g){ return g.id; }) } : null;
+    }
     var resolved = sorted.filter(function(g){ return isResolvedGoal(g) && g.id !== pinnedId; });
     var active = sorted.filter(function(g){ return !isResolvedGoal(g) || g.id === pinnedId; });
 
@@ -1664,7 +1738,7 @@ function renderNestEggGoals(c){
     }
 
     active.forEach(function(goal){ wrap.appendChild(buildGoalRow(goal, c)); });
-  });
+  }, ["year"]);
 }
 
 function escapeAttr(s){
@@ -1715,7 +1789,8 @@ function drawChart(canvas, projection, goals, currentValue, monthTicks){
   points.forEach(function(p){ maxY = Math.max(maxY, p.y); minY = Math.min(minY, p.y); });
   goals.forEach(function(g){ maxY = Math.max(maxY, num(g.amount)); });
 
-  var padL = 58, padR = 14, padT = 16, padB = 26;
+  /* room for the last year label, which now sits at the right edge */
+  var padL = 58, padR = 22, padT = 16, padB = 26;
   var spanY = (maxY - minY) || 1;
   maxY = maxY + spanY * 0.1;
   var minX = points[0].x, maxX = points[points.length-1].x;
@@ -1774,11 +1849,15 @@ function drawChart(canvas, projection, goals, currentValue, monthTicks){
   ctx.lineJoin = "round";
   ctx.stroke();
 
-  var last = points[points.length-1];
-  ctx.beginPath();
-  ctx.arc(xPx(last.x), yPx(last.y), 4, 0, Math.PI*2);
-  ctx.fillStyle = accent;
-  ctx.fill();
+  /* end-of-line dot only on the Travel fund chart — on Nest egg the only
+     markers should be goal diamonds that match rows in the goals table */
+  if (monthTicks){
+    var last = points[points.length-1];
+    ctx.beginPath();
+    ctx.arc(xPx(last.x), yPx(last.y), 4, 0, Math.PI*2);
+    ctx.fillStyle = accent;
+    ctx.fill();
+  }
 
   ctx.beginPath();
   ctx.arc(xPx(points[0].x), yPx(points[0].y), 3.5, 0, Math.PI*2);
@@ -2274,6 +2353,7 @@ function bindStatic(){
   });
 
   var neRateInput = el("ne-rate");
+  selectOnFocus(neRateInput);
   trackFieldUndo(neRateInput);
   neRateInput.addEventListener("input", function(e){ state.nestEgg.rate = num(e.target.value); render(); persist(); });
 
@@ -2281,6 +2361,10 @@ function bindStatic(){
   attachMoneyInput(el("tf-contribution"), { onChange: function(n){ state.travelFund.monthlyContribution = n; render(); persist(); } });
   var tfRateInput = el("tf-rate");
   var tfSpendInput = el("tf-spend");
+  [neRateInput, tfRateInput, tfSpendInput].forEach(function(inp){
+    if (inp !== neRateInput) selectOnFocus(inp);
+    inp.addEventListener("blur", function(){ if (inp.value === "") inp.value = "0"; });
+  });
   trackFieldUndo(tfRateInput);
   trackFieldUndo(tfSpendInput);
   tfRateInput.addEventListener("input", function(e){ state.travelFund.annualRatePct = num(e.target.value); render(); persist(); });

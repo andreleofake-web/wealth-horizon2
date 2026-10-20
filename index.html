@@ -802,7 +802,7 @@ function performUndo(){
   fieldEditSnapshots = {};
   render();
   saveLocalOnly();
-  driveScheduleSave();
+  markGhDirty();
   renderUndoButton();
 }
 function renderUndoButton(){
@@ -855,6 +855,7 @@ function saveLocalOnly(){
 }
 
 function persist(){
+  markGhDirty();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function(){
     saveLocalOnly();
@@ -874,8 +875,17 @@ var GH_DATA_PATH = "wealth-horizon-data.json";
 var ghSync = {
   status: "not-connected",
   lastSavedAt: null,
-  saveInFlight: false
+  saveInFlight: false,
+  /* local edits not yet sent with Save; editSeq lets a save that was in
+     flight while you kept typing leave the newer edits marked unsaved */
+  dirty: false,
+  editSeq: 0,
+  lastLoadAt: 0
 };
+function markGhDirty(){
+  ghSync.editSeq++;
+  if (!ghSync.dirty){ ghSync.dirty = true; renderGhStatus(); }
+}
 
 function ghConfig(){
   try {
@@ -907,11 +917,15 @@ function renderGhStatus(){
     saved: "Saved to GitHub" + (ghSync.lastSavedAt ? " \u00B7 " + ghSync.lastSavedAt : ""),
     "auth-error": "GitHub token invalid \u2014 check Sync Settings",
     error: "Sync error \u2014 try Save again",
-    ready: "Connected \u2014 no data saved yet"
+    ready: "Connected \u2014 no data saved yet",
+    unsaved: "Unsaved changes \u2014 tap Save to sync"
   };
-  var warn = ["not-connected","auth-error","error"].indexOf(ghSync.status) !== -1;
-  var ok = ghSync.status === "saved" || ghSync.status === "loaded";
-  node.textContent = copy[ghSync.status] || copy["not-connected"];
+  /* once connected, unsaved local edits override the idle states, so it's
+     clear this device has changes GitHub (and your other devices) lack */
+  var shown = (ghConfigured() && ghSync.dirty && ["loaded","saved","ready"].indexOf(ghSync.status) !== -1) ? "unsaved" : ghSync.status;
+  var warn = ["not-connected","auth-error","error","unsaved"].indexOf(shown) !== -1;
+  var ok = shown === "saved" || shown === "loaded";
+  node.textContent = copy[shown] || copy["not-connected"];
   node.className = "sync-status" + (warn ? " warn" : "") + (ok ? " ok" : "");
   var saveBtn = el("gh-save-btn");
   if (saveBtn) saveBtn.disabled = !ghConfigured() || ghSync.saveInFlight;
@@ -939,12 +953,15 @@ function ghFetch(cfg, opts){
   var headers = { "Authorization": "Bearer " + cfg.token, "Accept": "application/vnd.github+json" };
   var extra = opts.headers || {};
   for (var k in extra) headers[k] = extra[k];
-  return fetch(ghApiUrl(cfg), { method: opts.method, headers: headers, body: opts.body });
+  /* no-store: GitHub lets browsers reuse a response for ~60s, which could
+     hand back the copy from before a save made on another device */
+  return fetch(ghApiUrl(cfg), { method: opts.method, headers: headers, body: opts.body, cache: "no-store" });
 }
 
 async function ghLoad(){
   if (!ghConfigured()){ setGhStatus("not-connected"); return; }
   var cfg = ghConfig();
+  ghSync.lastLoadAt = Date.now();
   setGhStatus("loading");
   try {
     var res = await ghFetch(cfg, { method: "GET" });
@@ -964,6 +981,7 @@ async function ghLoad(){
     pushUndoIfChanged(pre);
     render();
     saveLocalOnly();
+    ghSync.dirty = false;
     setGhStatus("loaded");
   } catch(e){
     setGhStatus("error");
@@ -974,6 +992,7 @@ async function ghSaveNow(){
   if (!ghConfigured()){ setGhStatus("not-connected"); return; }
   if (ghSync.saveInFlight) return;
   var cfg = ghConfig();
+  var seqAtSave = ghSync.editSeq;
   ghSync.saveInFlight = true;
   setGhStatus("saving");
   try {
@@ -994,6 +1013,7 @@ async function ghSaveNow(){
     if (putRes.status === 401 || putRes.status === 403){ setGhStatus("auth-error"); return; }
     if (!putRes.ok){ setGhStatus("error"); return; }
     ghSync.lastSavedAt = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    ghSync.dirty = ghSync.editSeq !== seqAtSave;
     setGhStatus("saved");
   } catch(e){
     ghSync.saveInFlight = false;
@@ -1002,6 +1022,20 @@ async function ghSaveNow(){
 }
 
 function initGhSync(){
+  /* iOS resumes a home-screen web app (and Safari often restores a tab)
+     without reloading the page, so the load-on-start below would never
+     see a save made on another device. Re-pull whenever the app comes
+     back to the foreground — unless this device has unsaved edits, which
+     a pull would overwrite. */
+  function pullOnResume(){
+    if (document.visibilityState !== "visible") return;
+    if (!ghConfigured() || ghSync.dirty || ghSync.saveInFlight || ghSync.status === "loading") return;
+    if (Date.now() - ghSync.lastLoadAt < 5000) return;
+    ghLoad();
+  }
+  document.addEventListener("visibilitychange", pullOnResume);
+  window.addEventListener("pageshow", function(e){ if (e.persisted) pullOnResume(); });
+
   if (!ghConfigured()){ setGhStatus("not-connected"); return; }
   ghLoad();
 }

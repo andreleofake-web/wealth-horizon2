@@ -1789,20 +1789,26 @@ function drawChart(canvas, projection, goals, currentValue, monthTicks){
   points.forEach(function(p){ maxY = Math.max(maxY, p.y); minY = Math.min(minY, p.y); });
   goals.forEach(function(g){ maxY = Math.max(maxY, num(g.amount)); });
 
-  /* room for the last year label, which now sits at the right edge */
-  var padL = 58, padR = 22, padT = 16, padB = 26;
   var spanY = (maxY - minY) || 1;
   maxY = maxY + spanY * 0.1;
+  var steps = 4;
+  /* left padding fits the widest dollar label ("$39k", "$2.29M") instead
+     of a fixed 58px, so a phone-width chart gives the line that room;
+     padR leaves room for the last year label at the right edge */
+  ctx.font = "10.5px 'IBM Plex Mono', monospace";
+  var labelW = 0;
+  for (var li = 0; li <= steps; li++){
+    labelW = Math.max(labelW, ctx.measureText(moneyCompact(minY + (maxY - minY) * li / steps)).width);
+  }
+  var padL = Math.ceil(labelW) + 14, padR = 22, padT = 16, padB = 26;
   var minX = points[0].x, maxX = points[points.length-1].x;
   var spanX = (maxX - minX) || 1;
 
   function xPx(x){ return padL + (x - minX) / spanX * (W - padL - padR); }
   function yPx(y){ return H - padB - (y - minY) / (maxY - minY) * (H - padT - padB); }
 
-  ctx.font = "10.5px 'IBM Plex Mono', monospace";
   ctx.strokeStyle = grid;
   ctx.fillStyle = inkDim;
-  var steps = 4;
   for (var i = 0; i <= steps; i++){
     var gy = minY + (maxY - minY) * i / steps;
     var py = yPx(gy);
@@ -1889,17 +1895,21 @@ function drawChart(canvas, projection, goals, currentValue, monthTicks){
     goalMarkers.push({ goal: g, px: gx, py: gy });
   });
 
-  /* one small tick per calendar month, clickable for the exact value at
-     that point (Travel fund only — Nest egg keeps its sparser goal
-     diamonds instead) */
+  /* every month stays tappable for its exact value (taps snap to the
+     nearest month by x), but only each December peak — the high point
+     just before the yearly spend — gets a drawn dot; a dot per month
+     crowded the line into a beaded mess at phone width. Travel fund only;
+     Nest egg keeps its goal diamonds instead. */
   var monthMarkers = [];
   if (monthTicks){
     ctx.fillStyle = accent;
     projection.series.forEach(function(p){
       var mx = xPx(p.x !== undefined ? p.x : p.year + 1), my = yPx(p.balance);
-      ctx.beginPath();
-      ctx.arc(mx, my, 2, 0, Math.PI*2);
-      ctx.fill();
+      if (p.month === 12){
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, Math.PI*2);
+        ctx.fill();
+      }
       monthMarkers.push({ point: p, px: mx, py: my });
     });
   }

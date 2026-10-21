@@ -61,8 +61,8 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 315500,
-      "previous": 314500,
+      "current": 314700,
+      "previous": 315500,
       "liquid": true
     },
     {
@@ -75,27 +75,27 @@
     {
       "id": "mh3194oikk3",
       "name": "Vanguard Roth IRA",
-      "current": 156550,
-      "previous": 157000,
+      "current": 157300,
+      "previous": 156550,
       "liquid": false
     },
     {
       "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 262045,
-      "previous": 265045,
+      "current": 263100,
+      "previous": 262045,
       "liquid": false
     },
     {
       "id": "0j4hq6bikk3",
       "name": "Fidelity Salesforce 401k",
-      "current": 13800,
-      "previous": 13500,
+      "current": 13830,
+      "previous": 1830,
       "liquid": false
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": true,
+    "liquidExpanded": false,
     "nonLiquidExpanded": false
   },
   "travelFund": {

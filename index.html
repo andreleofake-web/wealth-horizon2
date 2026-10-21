@@ -2215,21 +2215,16 @@ function attachTravelFundChartHover(canvasId, tooltipId){
 
   canvas.addEventListener("mousemove", function(e){ showAt(e.clientX, e.clientY); });
   canvas.addEventListener("mouseleave", clear);
+  /* same touch behavior as the Nest egg chart: the tooltip shows while a
+     finger is on the chart, follows it (without scrolling the page), and
+     goes away when the finger lifts */
   canvas.addEventListener("touchstart", function(e){ if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-  canvas.addEventListener("touchmove", function(e){ if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-  /* touchend intentionally does NOT clear: on mobile there's no hover, so
-     lifting the finger would otherwise close the tooltip before it can be
-     read. Instead it stays pinned (like the nest-egg goal popover) until
-     the user taps elsewhere or presses Escape. Desktop is unaffected —
-     mouseleave above still clears on real hover-out. */
-  document.addEventListener("click", function(e){
-    if (openFormulaMonthKey && e.target !== canvas && !tooltip.contains(e.target)){
-      clear();
-    }
-  });
-  document.addEventListener("keydown", function(e){
-    if (e.key === "Escape" && openFormulaMonthKey) clear();
-  });
+  canvas.addEventListener("touchmove", function(e){
+    if (e.touches[0]) showAt(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+  canvas.addEventListener("touchend", clear);
+  canvas.addEventListener("touchcancel", clear);
 }
 
 /* ---------- chart hover ---------- */

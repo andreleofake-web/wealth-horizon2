@@ -68,8 +68,8 @@
     {
       "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 17900,
-      "previous": 18050,
+      "current": 17800,
+      "previous": 17900,
       "liquid": true
     },
     {
@@ -95,8 +95,8 @@
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": false,
-    "nonLiquidExpanded": true
+    "liquidExpanded": true,
+    "nonLiquidExpanded": false
   },
   "travelFund": {
     "currentAmount": 3004,

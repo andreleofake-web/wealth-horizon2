@@ -95,7 +95,7 @@
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": true,
+    "liquidExpanded": false,
     "nonLiquidExpanded": false
   },
   "travelFund": {

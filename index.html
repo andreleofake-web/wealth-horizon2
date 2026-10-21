@@ -405,6 +405,7 @@ canvas{width:100%;height:230px;display:block;cursor:crosshair;}
 .goal-row .delta.pos{color:var(--positive);}
 .goal-row .delta.neg{color:var(--critical);}
 .goal-triplet,.goal-status-row{display:contents;}
+.goal-mini-label{display:none;}
 @media (max-width:640px){
   /* the desktop grid's fixed-width columns (340px+) don't fit most phone
      widths, forcing permanent horizontal scroll on this one row — which,
@@ -416,14 +417,22 @@ canvas{width:100%;height:230px;display:block;cursor:crosshair;}
   .goal-head.has-delta,.goal-row.has-delta{
     grid-template-columns:50px 1fr 1fr 24px;width:auto;min-width:0;column-gap:6px;
   }
-  .goal-head.has-delta span:nth-child(4){display:none;}
+  /* each row labels its own Goal / Actual boxes on phones, replacing the
+     single header row */
+  .goal-head.has-delta{display:none;}
   .goal-row.has-delta{row-gap:2px;padding:6px 0 5px;border-bottom:1px solid var(--border);}
+  .goal-row.has-delta .goal-mini-label{
+    display:block;grid-row:1;font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-dim);padding-left:2px;line-height:1.2;
+  }
+  .goal-row.has-delta .goal-mini-amount{grid-column:2;}
+  .goal-row.has-delta .goal-mini-actual{grid-column:3;}
   .goal-row.has-delta input[type=text]{font-size:13px;padding:6px;}
-  .goal-row.has-delta [data-field="year"]{grid-column:1;grid-row:1;}
-  .goal-row.has-delta [data-field="amount"]{grid-column:2;grid-row:1;}
-  .goal-row.has-delta [data-field="actual"]{grid-column:3;grid-row:1;}
-  .goal-row.has-delta .remove-row{grid-column:4;grid-row:1;padding:4px;}
-  .goal-row.has-delta .delta{grid-column:3;grid-row:2;font-size:11px;padding-right:6px;}
+  .goal-row.has-delta [data-field="year"]{grid-column:1;grid-row:2;}
+  .goal-row.has-delta [data-field="amount"]{grid-column:2;grid-row:2;}
+  .goal-row.has-delta [data-field="actual"]{grid-column:3;grid-row:2;}
+  .goal-row.has-delta .remove-row{grid-column:4;grid-row:2;padding:4px;}
+  .goal-row.has-delta .delta{grid-column:3;grid-row:3;font-size:11px;padding-right:6px;}
   .goal-group-row{width:auto;min-width:0;white-space:normal;}
   /* no indent on phones, so past-goal boxes line up under the column labels */
   .goals-card .goal-group-body{gap:0;padding-left:0;margin:0 0 4px;border-left:none;}
@@ -661,7 +670,7 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
       <div class="card goals-card">
         <div class="card-title">Net worth goals</div>
         <div class="table-wrap">
-          <div class="goal-head has-delta"><span>Year</span><span>Target</span><span>Actual</span><span>Delta</span><span></span></div>
+          <div class="goal-head has-delta"><span>Year</span><span>Goal</span><span>Actual</span><span>Delta</span><span></span></div>
           <div class="ledger" id="nestegg-goals"></div>
         </div>
         <button class="add-row-btn" id="add-negoal">+ Add goal</button>
@@ -1707,6 +1716,8 @@ function buildGoalRow(goal, c){
   var deltaCell = '<span class="delta ' + deltaCls + '">' + deltaText(d) + '</span>';
   row.innerHTML =
     '<div class="goal-triplet">' +
+      '<span class="goal-mini-label goal-mini-amount">Goal</span>' +
+      '<span class="goal-mini-label goal-mini-actual">Actual</span>' +
       '<input type="text" inputmode="numeric" data-field="year" value="' + goal.year + '">' +
       '<input type="text" class="money-input" data-field="amount" value="' + formatInt(goal.amount) + '">' +
       '<input type="text" class="money-input" data-field="actual" placeholder="\u2014" value="' + (goal.actual === null || goal.actual === undefined ? "" : formatInt(goal.actual)) + '">' +

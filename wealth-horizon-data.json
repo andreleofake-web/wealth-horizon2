@@ -1,6 +1,6 @@
 {
   "meta": {
-    "asOf": "2026-10-20"
+    "asOf": "2026-10-21"
   },
   "income": {
     "pensionVA": 8700,
@@ -61,8 +61,8 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 314500,
-      "previous": 314250,
+      "current": 315500,
+      "previous": 314500,
       "liquid": true
     },
     {
@@ -95,8 +95,8 @@
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": false,
-    "nonLiquidExpanded": true
+    "liquidExpanded": true,
+    "nonLiquidExpanded": false
   },
   "travelFund": {
     "currentAmount": 3004,

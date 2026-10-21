@@ -312,10 +312,21 @@ input[type=number]{-moz-appearance:textfield;}
 .forecast-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start;}
 .forecast-grid>*{min-width:0;}
 @media (max-width:900px){.forecast-grid{grid-template-columns:1fr;}}
-.chart-card{padding:22px 24px 14px;}
+.chart-card{padding:22px 24px 16px;}
 .chart-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:2px 12px;margin-bottom:6px;}
 .chart-head h3{font-size:17px;}
 .chart-head .now{font-family:var(--font-mono);font-size:13px;color:var(--ink-dim);white-space:nowrap;}
+/* "Now" + the inline growth-rate box share the header's second slot */
+.chart-meta{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;}
+.chart-rate{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-dim);white-space:nowrap;}
+.chart-rate input{
+  width:58px;font-family:var(--font-mono);font-size:13px;text-align:right;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:4px 7px;color:var(--ink);
+}
+.chart-rate input:focus{border-color:var(--accent);}
+@media (max-width:640px){
+  .chart-meta{flex-basis:100%;justify-content:space-between;}
+}
 canvas{width:100%;height:230px;display:block;cursor:crosshair;}
 .chart-canvas-wrap{position:relative;}
 .chart-tooltip{
@@ -361,10 +372,15 @@ canvas{width:100%;height:230px;display:block;cursor:crosshair;}
 .formula-popover .formula-step-head span:nth-child(2),.formula-popover .formula-step-head span:nth-child(4),.formula-popover .formula-step-head span:nth-child(5){text-align:right;}
 .assumptions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
 @media (max-width:520px){.assumptions{grid-template-columns:1fr 1fr;}}
-.assumptions-1{grid-template-columns:1fr;max-width:200px;}
 
-.rate-overrides{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);max-width:280px;}
-.rate-overrides-title{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;}
+.rate-overrides{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.rate-overrides-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;}
+.rate-overrides-top .add-row-btn{margin-top:0;padding:5px 10px;flex-shrink:0;}
+.rate-overrides-title{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim);}
+.rate-override-head,#rate-overrides-list{max-width:280px;}
+/* on phones the hint wraps the title to two lines; the empty-state line
+   below already says what overrides do */
+@media (max-width:640px){.rate-overrides-hint{display:none;}}
 .rate-overrides-title .rate-overrides-hint{font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;}
 .rate-override-head{display:grid;grid-template-columns:56px 1fr 22px;gap:8px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);padding:0 0 4px;}
 .rate-override-row{display:grid;grid-template-columns:56px 1fr 22px;gap:8px;align-items:center;margin-bottom:6px;}
@@ -373,7 +389,7 @@ canvas{width:100%;height:230px;display:block;cursor:crosshair;}
   border:1px solid var(--border);border-radius:6px;padding:6px 8px;width:100%;color:var(--ink);
 }
 .rate-override-row input:focus{border-color:var(--accent);}
-.rate-overrides-empty{font-size:12px;color:var(--ink-dim);padding:4px 0 8px;}
+.rate-overrides-empty{font-size:12px;color:var(--ink-dim);padding:2px 0 0;}
 .assumptions .field-input{padding:7px 9px;font-size:13px;}
 
 .goals-card{display:flex;flex-direction:column;gap:10px;}
@@ -609,21 +625,23 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
       <div class="card chart-card">
         <div class="chart-head">
           <h3>Nest egg &mdash; total net worth</h3>
-          <span class="now mono" id="ne-current">Now: $0</span>
+          <div class="chart-meta">
+            <span class="now mono" id="ne-current">Now: $0</span>
+            <label class="chart-rate" for="ne-rate">Growth<input type="number" id="ne-rate" step="0.1" aria-label="Growth rate, percent per year">%/yr</label>
+          </div>
         </div>
         <div class="chart-canvas-wrap">
           <canvas id="chart-nestegg"></canvas>
           <div class="chart-tooltip" id="tt-nestegg"><div class="tt-value"></div><div class="tt-date"></div></div>
           <div class="formula-popover" id="formula-popover-nestegg"></div>
         </div>
-        <div class="assumptions assumptions-1">
-          <div class="field"><label class="field-label">Growth rate (%/yr)</label><input class="field-input" type="number" id="ne-rate" step="0.1"></div>
-        </div>
         <div class="rate-overrides">
-          <div class="rate-overrides-title">Rate overrides <span class="rate-overrides-hint">&mdash; optional, per-year exceptions to the rate above</span></div>
-          <div class="rate-override-head"><span>Year</span><span>Rate (%)</span><span></span></div>
+          <div class="rate-overrides-top">
+            <div class="rate-overrides-title">Rate overrides <span class="rate-overrides-hint">&mdash; per-year exceptions to the growth rate</span></div>
+            <button class="add-row-btn" id="add-rate-override">+ Add</button>
+          </div>
+          <div class="rate-override-head" id="rate-override-head"><span>Year</span><span>Rate (%)</span><span></span></div>
           <div id="rate-overrides-list"></div>
-          <button class="add-row-btn" id="add-rate-override">+ Add override</button>
         </div>
       </div>
 
@@ -1623,6 +1641,7 @@ function pastGoalsSummaryText(resolved){
 function renderRateOverrides(){
   var overrides = state.nestEgg.rateOverrides;
   var wrap = el("rate-overrides-list");
+  el("rate-override-head").style.display = state.nestEgg.rateOverrides.length ? "" : "none";
 
   /* pin the current display order while a row in this list is focused \u2014
      otherwise re-sorting by year on every keystroke makes the row you're
@@ -1634,7 +1653,7 @@ function renderRateOverrides(){
     if (!overrides.length){
       var empty = document.createElement("div");
       empty.className = "rate-overrides-empty";
-      empty.textContent = "None \u2014 every year uses the rate above.";
+      empty.textContent = "None \u2014 every year uses the growth rate.";
       wrap.appendChild(empty);
       return;
     }

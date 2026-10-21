@@ -88,7 +88,7 @@
     },
     {
       "id": "0j4hq6bikk3",
-      "name": "Fidelity 401k",
+      "name": "Fidelity Salesforce 401k",
       "current": 13800,
       "previous": 13500,
       "liquid": false
@@ -96,7 +96,7 @@
   ],
   "accountsGroups": {
     "liquidExpanded": false,
-    "nonLiquidExpanded": false
+    "nonLiquidExpanded": true
   },
   "travelFund": {
     "currentAmount": 3004,

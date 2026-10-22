@@ -82,8 +82,8 @@
     {
       "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 263100,
-      "previous": 262045,
+      "current": 264800,
+      "previous": 263100,
       "liquid": false
     },
     {
@@ -96,7 +96,7 @@
   ],
   "accountsGroups": {
     "liquidExpanded": false,
-    "nonLiquidExpanded": false
+    "nonLiquidExpanded": true
   },
   "travelFund": {
     "currentAmount": 3004,

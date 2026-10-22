@@ -660,7 +660,6 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
     </div>
     <div class="card totals-card">
       <div class="totals-row totals-row-main"><span>Total</span><span class="mono" id="accounts-total">$0</span></div>
-      <div class="totals-row"><span>Change since Previous</span><span class="mono" id="accounts-diff">$0</span></div>
       <div class="totals-row"><span>Liquid</span><span class="mono" id="accounts-liquid">$0</span></div>
       <div class="totals-row"><span>Non-Liquid</span><span class="mono" id="accounts-nonliquid">$0</span></div>
     </div>
@@ -1467,7 +1466,6 @@ function render(){
   renderAccounts(c);
 
   el("accounts-total").textContent = money(c.accountsTotalCurrent);
-  el("accounts-diff").textContent = diffSign + money(Math.abs(c.accountsDiff));
   el("accounts-liquid").textContent = money(c.liquidTotal);
   el("accounts-nonliquid").textContent = money(c.nonliquidTotal);
 

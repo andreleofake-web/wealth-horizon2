@@ -224,6 +224,13 @@ input[type=file]{display:none;}
 .section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
 .section-head h2{font-size:22px;}
 .section-note{font-size:12.5px;color:var(--ink-dim);max-width:36ch;text-align:right;}
+@media (max-width:760px){
+  /* once the note drops below the heading, run it full width and left-
+     aligned right under the heading instead of a narrow right-aligned
+     column with a gap above it */
+  .section-head{flex-direction:column;align-items:stretch;gap:4px;margin-bottom:12px;}
+  .section-note{max-width:none;text-align:left;}
+}
 
 .card{
   background:var(--surface);border:1px solid var(--border);border-radius:14px;

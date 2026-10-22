@@ -294,19 +294,23 @@ input[type=number]{-moz-appearance:textfield;}
   border:1px solid var(--border);border-radius:7px;padding:8px 10px 8px 20px;color:var(--ink);width:100%;
 }
 .ledger-row input.money-input:focus{border-color:var(--accent);}
-.ledger-row .ledger-static-label{font-family:var(--font-body);font-size:14px;color:var(--ink-dim);padding:8px 2px;border-bottom:1px solid transparent;}
-.ledger-row .ledger-static-amt{font-family:var(--font-mono);font-size:13px;color:var(--ink-dim);text-align:right;padding:8px 10px;}
+/* read-only line item (paycheck investment): label with a small caption
+   under it, amount in a dashed, non-editable box in the same column as
+   the input boxes below */
+.ledger-row .ledger-static-label{font-family:var(--font-body);font-size:14px;color:var(--ink);padding:6px 2px;}
+.ledger-static-note{display:block;font-size:11px;color:var(--ink-dim);margin-top:2px;}
+.ledger-row .ledger-static-amt{
+  position:relative;font-family:var(--font-mono);font-size:14px;color:var(--ink-dim);text-align:right;
+  border:1px dashed var(--border);border-radius:7px;padding:8px 10px 8px 20px;
+}
+.ledger-row .ledger-static-amt::before{content:"$";position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;}
 .ledger-head{display:grid;grid-template-columns:1fr 130px 32px;gap:10px;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-dim);padding:0 2px 2px;}
 .ledger-head.accounts{grid-template-columns:1fr 120px 120px 32px;}
-/* spans the amount + remove columns, padded so its figures line up with the inputs above/below */
-.ledger-row .ledger-static-amt.wide{grid-column:span 2;padding-right:52px;}
-.ledger-static-note{display:block;white-space:nowrap;font-family:var(--font-body);font-size:11px;margin-top:2px;}
 @media (max-width:640px){
   /* amount boxes only need room for six digits ("999,999") on a phone;
      the freed width goes to the name column so labels don't clip */
   .card{padding:18px 16px;}
   .ledger-row,.ledger-head{grid-template-columns:1fr 96px 28px;gap:8px;}
-  .ledger-row .ledger-static-amt.wide{padding-right:46px;}
 }
 .remove-row{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:16px;line-height:1;padding:6px;border-radius:6px;}
 .remove-row:hover{color:var(--critical);background:var(--critical-soft);}
@@ -627,7 +631,6 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
     <div class="grid-2">
       <div class="card">
         <div class="card-title">Monthly commitments</div>
-        <div class="ledger-head"><span>Commitment</span><span>Amount / mo</span><span></span></div>
         <div class="ledger" id="investments-list"></div>
         <button class="add-row-btn" id="add-investment">+ Add investment</button>
         <div class="ledger-total"><span>Total monthly investment</span><span class="mono" id="inv-total">$0</span></div>
@@ -1533,8 +1536,8 @@ function renderInvestments(c){
     var paycheckRow = document.createElement("div");
     paycheckRow.className = "ledger-row";
     paycheckRow.innerHTML =
-      '<span class="ledger-static-label">Paycheck investment (withheld)</span>' +
-      '<span class="ledger-static-amt wide">' + money(c.paycheckInvest) + '<span class="ledger-static-note">from paychecks</span></span>';
+      '<span class="ledger-static-label">Paycheck investment<span class="ledger-static-note">Set in Income &amp; pay periods</span></span>' +
+      '<span class="ledger-static-amt">' + formatInt(c.paycheckInvest) + '</span><span></span>';
     wrap.appendChild(paycheckRow);
 
     state.investments.forEach(function(inv){

@@ -183,7 +183,25 @@ input[type=file]{display:none;}
   display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:12px;margin-bottom:36px;
 }
 .stat-strip>*{min-width:0;}
-@media (max-width:760px){.stat-strip{grid-template-columns:1fr 1fr;}}
+.lbl-short{display:none;}
+@media (max-width:760px){
+  /* phones: net worth gets its own full-width tile with the change on the
+     same line, then the three monthly figures in one compact row — no
+     empty space left under the shorter tiles of a 2x2 grid */
+  .stat-strip{grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:28px;}
+  .stat-strip .stat-tile{padding:10px 11px;border-radius:10px;}
+  .stat-strip .stat-tile.hero{grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;padding:12px 14px;}
+  .stat-strip .stat-tile.hero .stat-label{flex-basis:100%;}
+  .stat-strip .stat-label{font-size:9.5px;letter-spacing:.05em;margin-bottom:4px;white-space:nowrap;}
+  .stat-strip .stat-tile:not(.hero) .stat-value{font-size:19px;overflow-wrap:normal;white-space:nowrap;}
+  .stat-strip .stat-sub{margin-top:0;}
+  .lbl-full{display:none;}
+  .lbl-short{display:inline;}
+}
+@media (max-width:360px){
+  .stat-strip .stat-label{font-size:8.5px;letter-spacing:.02em;}
+  .stat-strip .stat-tile:not(.hero) .stat-value{font-size:16px;}
+}
 .stat-tile{
   background:var(--surface);border:1px solid var(--border);border-radius:12px;
   padding:18px 20px;box-shadow:var(--shadow);
@@ -193,7 +211,7 @@ input[type=file]{display:none;}
 .stat-value{font-family:var(--font-display);font-size:26px;font-weight:600;overflow-wrap:break-word;}
 .stat-tile.hero .stat-value{font-size:34px;}
 @media (max-width:480px){
-  .stat-tile.hero .stat-value{font-size:22px;}
+  .stat-tile.hero .stat-value{font-size:26px;}
 }
 .stat-sub{font-size:12px;color:var(--ink-dim);margin-top:6px;font-family:var(--font-mono);}
 /* each half stays on one line, so a narrow tile breaks between them, not mid-phrase */
@@ -227,6 +245,10 @@ input[type=file]{display:none;}
 }
 .field-input:focus{border-color:var(--accent);}
 .field-row{display:flex;align-items:center;gap:10px;}
+/* label and amount box share one line (After-tax income card) */
+.inline-field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.inline-field .field-label{font-size:13.5px;}
+.inline-field .field-input{width:120px;flex-shrink:0;text-align:right;padding:7px 10px;}
 .field-row .field{flex:1;}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input[type=number]{-moz-appearance:textfield;}
@@ -306,7 +328,7 @@ input[type=number]{-moz-appearance:textfield;}
 .payperiod .row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;}
 .payperiod .row .lbl{color:var(--ink-dim);}
 .payperiod .row .val{font-family:var(--font-mono);}
-.payperiod .row.withhold input{width:100px;}
+.payperiod .row.withhold input{width:120px;text-align:right;padding:7px 10px;}
 .payperiod hr{border:none;border-top:1px solid var(--border);margin:2px 0;}
 .payperiod .remain{display:flex;justify-content:space-between;align-items:baseline;padding-top:4px;}
 .payperiod .remain .val{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--positive);}
@@ -527,15 +549,15 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
       <div class="stat-sub" id="stat-networth-sub">vs. previous</div>
     </div>
     <div class="stat-tile">
-      <div class="stat-label">Monthly income</div>
+      <div class="stat-label"><span class="lbl-full">Monthly income</span><span class="lbl-short">Income/mo</span></div>
       <div class="stat-value mono" id="stat-income">$0</div>
     </div>
     <div class="stat-tile">
-      <div class="stat-label">Monthly expenses</div>
+      <div class="stat-label"><span class="lbl-full">Monthly expenses</span><span class="lbl-short">Expenses/mo</span></div>
       <div class="stat-value mono" id="stat-expenses">$0</div>
     </div>
     <div class="stat-tile">
-      <div class="stat-label">Monthly investment</div>
+      <div class="stat-label"><span class="lbl-full">Monthly investment</span><span class="lbl-short">Invested/mo</span></div>
       <div class="stat-value mono" id="stat-investment">$0</div>
     </div>
   </div>
@@ -547,17 +569,11 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
       <div class="section-note">After-tax income, split across your two pay dates. Withholding amounts come out of each paycheck before it hits spending money.</div>
     </div>
     <div class="grid-2">
-      <div class="card">
+      <div class="card income-card">
         <div class="card-title">After-tax income</div>
-        <div class="field-row" style="margin-bottom:12px;">
-          <div class="field"><label class="field-label">Pension + VA pay (monthly)</label><input class="field-input" type="text" id="in-pensionva"></div>
-        </div>
-        <div class="field-row" style="margin-bottom:12px;">
-          <div class="field"><label class="field-label">Salary &mdash; paid 1st</label><input class="field-input" type="text" id="in-salary1"></div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label class="field-label">Salary &mdash; paid 15th</label><input class="field-input" type="text" id="in-salary2"></div>
-        </div>
+        <div class="inline-field"><label class="field-label" for="in-pensionva">Pension + VA pay (monthly)</label><input class="field-input" type="text" id="in-pensionva"></div>
+        <div class="inline-field"><label class="field-label" for="in-salary1">Salary &mdash; paid 1st</label><input class="field-input" type="text" id="in-salary1"></div>
+        <div class="inline-field"><label class="field-label" for="in-salary2">Salary &mdash; paid 15th</label><input class="field-input" type="text" id="in-salary2"></div>
         <div class="ledger-total"><span>Total monthly income</span><span class="mono" id="income-total">$0</span></div>
       </div>
       <div class="card">

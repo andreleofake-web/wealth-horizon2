@@ -121,25 +121,44 @@ button{font-family:inherit;}
   font-family:var(--font-mono);font-size:13px;background:transparent;border:none;
   color:var(--ink);text-align:right;padding:0;
 }
-.save-indicator{font-size:11.5px;color:var(--ink-dim);white-space:nowrap;}
+/* status line + a slim toolbar: Undo, Save, and a "..." menu holding the
+   occasional actions (sync settings, backups) */
+.asof-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.status-line{font-size:11.5px;color:var(--ink-dim);display:flex;gap:8px;align-items:baseline;}
+.save-indicator{white-space:nowrap;}
+.save-indicator[hidden]{display:none;}
 .save-indicator .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--positive);margin-right:5px;vertical-align:1px;}
-.sync-status{font-size:11.5px;color:var(--ink-dim);white-space:nowrap;}
+.sync-status{white-space:nowrap;}
 .sync-status.warn{color:var(--warning);}
 .sync-status.ok{color:var(--positive);}
-.io-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.io-buttons{display:flex;gap:6px;align-items:center;}
+.tb-btn{
+  height:32px;display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-body);font-size:12.5px;font-weight:600;letter-spacing:.01em;
+  padding:0 12px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--ink);cursor:pointer;
+}
+.tb-btn:hover{border-color:var(--ink-dim);}
+.tb-btn:disabled{opacity:.4;cursor:default;}
+.tb-btn:disabled:hover{border-color:var(--border);}
+.tb-primary{background:var(--accent);border-color:var(--accent);color:var(--bg);}
+.tb-primary:hover{border-color:var(--accent);filter:brightness(1.07);}
+.tb-icon{width:32px;padding:0;justify-content:center;font-size:17px;line-height:1;}
+.tb-count{
+  font-size:10.5px;font-weight:600;min-width:16px;height:16px;padding:0 4px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--ink-dim);
+}
+.tb-more{position:relative;}
+.tb-more .pop-menu{right:0;top:calc(100% + 6px);}
 @media (max-width:640px){
-  /* phone header: logo + date on one row, status on the next, then the
-     five buttons as an even 3 + 2 grid instead of a ragged right-aligned wrap */
-  .topbar{align-items:center;gap:14px;padding-bottom:16px;margin-bottom:18px;}
-  .brand-logo{height:40px;border-radius:8px;}
+  /* phone: logo + date on the first row; status on the left and the
+     toolbar on the right of the second */
+  .topbar{align-items:center;gap:12px;padding-bottom:14px;margin-bottom:16px;}
+  .brand-logo{height:36px;border-radius:8px;}
   .topbar-right{display:contents;}
-  .asof-actions{
-    flex-basis:100%;display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:8px 12px;
-  }
-  .asof-actions .sync-status{white-space:normal;text-align:right;min-width:0;}
-  .asof-actions .io-buttons{grid-column:1 / -1;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
-  .asof-actions .io-buttons .btn{grid-column:span 2;padding:9px 6px;}
-  .asof-actions .io-buttons .btn:nth-of-type(n+4){grid-column:span 3;}
+  .asof-actions{flex-basis:100%;flex-direction:row;justify-content:space-between;align-items:center;gap:10px;}
+  .status-line{flex:1;min-width:0;flex-wrap:wrap;gap:2px 8px;}
+  .sync-status{white-space:normal;}
 }
 
 .gh-settings-panel{
@@ -173,49 +192,49 @@ input[type=file]{display:none;}
 /* ---------- nav pills ---------- */
 /* what-if tabs: wrap rather than scroll sideways (a second scrollable
    region would break iOS's tap-the-status-bar-to-scroll-up gesture) */
-.scenario-bar{position:relative;margin:-6px 0 18px;}
-.scenario-tabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-.scenario-tab{
-  display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:8px;
-  background:var(--surface);max-width:100%;
+.scenario-bar{position:relative;margin:-4px 0 14px;}
+.scenario-tabs{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.scenario-seg{
+  display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;max-width:100%;
+  background:var(--surface-2);border-radius:10px;
 }
-.scenario-tab.active{border-color:var(--accent);background:var(--accent-soft);}
+.scenario-tab{display:inline-flex;align-items:center;border-radius:7px;max-width:100%;}
+.scenario-tab.active{background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.18),0 0 0 1px var(--border);}
 .scenario-name{
-  font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--ink-dim);
-  background:none;border:none;padding:7px 12px;cursor:pointer;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;
+  font-family:var(--font-body);font-size:12.5px;font-weight:600;color:var(--ink-dim);
+  background:none;border:none;padding:6px 12px;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;
 }
-.scenario-tab.active .scenario-name{color:var(--ink);padding-right:4px;cursor:default;}
+.scenario-name:hover{color:var(--ink);}
+.scenario-tab.active .scenario-name{color:var(--ink);padding-right:2px;cursor:default;}
 .scenario-more{
-  background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:16px;line-height:1;
-  padding:6px 10px 6px 4px;
+  background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:14px;line-height:1;
+  padding:6px 9px 6px 5px;
 }
 .scenario-more:hover{color:var(--ink);}
 .scenario-add{
-  font-size:18px;line-height:1;font-weight:500;color:var(--accent);cursor:pointer;
-  background:none;border:1px dashed var(--border);border-radius:8px;padding:6px 12px;
+  width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:17px;line-height:1;color:var(--ink-dim);cursor:pointer;
+  background:none;border:1px solid var(--border);border-radius:8px;
 }
-.scenario-add:hover{border-color:var(--accent);}
-.scenario-menu{
-  position:absolute;z-index:30;min-width:130px;display:flex;flex-direction:column;
+.scenario-add:hover{color:var(--accent);border-color:var(--accent);}
+.scenario-menu,.pop-menu{
+  position:absolute;z-index:30;min-width:150px;display:flex;flex-direction:column;
   background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);padding:4px;
 }
-.scenario-menu[hidden]{display:none;}
-.scenario-menu button{
-  font-family:var(--font-body);font-size:13.5px;text-align:left;color:var(--ink);
+.scenario-menu[hidden],.pop-menu[hidden]{display:none;}
+.scenario-menu button,.pop-menu button{
+  font-family:var(--font-body);font-size:13.5px;text-align:left;color:var(--ink);white-space:nowrap;
   background:none;border:none;border-radius:7px;padding:9px 12px;cursor:pointer;
 }
-.scenario-menu button:hover{background:var(--surface-2);}
+.scenario-menu button:hover,.pop-menu button:hover{background:var(--surface-2);}
 .scenario-menu button.danger{color:var(--critical);}
-.scenario-note{margin-top:8px;font-size:12px;color:var(--warning);}
+.scenario-note{margin-top:6px;font-size:11.5px;color:var(--warning);}
 .scenario-note[hidden]{display:none;}
 
-.navpills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
-.navpills a{
-  font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px;
-  border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--ink-dim);
-}
-.navpills a:hover{color:var(--ink);border-color:var(--accent);}
+.navpills{display:flex;gap:4px 18px;flex-wrap:wrap;margin-bottom:24px;}
+.navpills a{font-size:12.5px;font-weight:500;padding:4px 0;text-decoration:none;color:var(--ink-dim);}
+.navpills a:hover{color:var(--ink);}
 
 /* ---------- overview strip ---------- */
 .stat-strip{
@@ -559,15 +578,22 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
         <label for="asof-input">Figures as of</label>
         <input type="date" id="asof-input" />
       </div>
-      <div class="asof asof-actions">
-        <span class="save-indicator" id="save-indicator"><span class="dot"></span>Saved</span>
-        <span class="sync-status" id="gh-status">Not connected</span>
+      <div class="asof-actions">
+        <div class="status-line">
+          <span class="save-indicator" id="save-indicator"><span class="dot"></span>Saved</span>
+          <span class="sync-status" id="gh-status">Not synced</span>
+        </div>
         <div class="io-buttons">
-          <button class="btn" id="undo-btn" disabled>Undo</button>
-          <button class="btn" id="gh-save-btn" disabled>Save</button>
-          <button class="btn" id="gh-settings-btn">Sync Settings</button>
-          <button class="btn" id="export-btn">Export backup</button>
-          <button class="btn" id="import-btn">Import backup</button>
+          <button type="button" class="tb-btn" id="undo-btn" disabled>Undo</button>
+          <button type="button" class="tb-btn tb-primary" id="gh-save-btn" disabled>Save</button>
+          <div class="tb-more">
+            <button type="button" class="tb-btn tb-icon" id="more-btn" aria-label="More options" aria-haspopup="menu" aria-expanded="false">&#8943;</button>
+            <div class="pop-menu" id="more-menu" role="menu" hidden>
+              <button type="button" role="menuitem" id="gh-settings-btn">Sync settings</button>
+              <button type="button" role="menuitem" id="export-btn">Export backup</button>
+              <button type="button" role="menuitem" id="import-btn">Import backup</button>
+            </div>
+          </div>
           <input type="file" id="import-file" accept="application/json" />
         </div>
       </div>
@@ -590,12 +616,12 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
     <div class="scenario-note" id="scenario-note" hidden></div>
   </div>
 
-  <nav class="navpills">
-    <a href="#income">Income & Pay Periods</a>
+  <nav class="navpills" aria-label="Jump to section">
+    <a href="#income"><span class="lbl-full">Income &amp; Pay Periods</span><span class="lbl-short">Income</span></a>
     <a href="#expenses">Expenses</a>
-    <a href="#investments">Investments</a>
+    <a href="#investments"><span class="lbl-full">Investments</span><span class="lbl-short">Investing</span></a>
     <a href="#accounts">Accounts</a>
-    <a href="#forecast">Forecast & Goals</a>
+    <a href="#forecast"><span class="lbl-full">Forecast &amp; Goals</span><span class="lbl-short">Forecast</span></a>
   </nav>
 
   <div class="stat-strip">
@@ -1000,7 +1026,7 @@ function renderUndoButton(){
   if (!btn) return;
   var n = undoStack.length;
   btn.disabled = n === 0;
-  btn.textContent = n ? "Undo (" + n + ")" : "Undo";
+  btn.innerHTML = n ? 'Undo<span class="tb-count">' + n + '</span>' : "Undo";
 }
 function undoKeyFor(inputEl){
   if (inputEl.id) return inputEl.id;
@@ -1103,7 +1129,7 @@ function renderGhStatus(){
   var node = el("gh-status");
   if (!node) return;
   var copy = {
-    "not-connected": "Not connected \u2014 set up Sync Settings",
+    "not-connected": "Not synced to GitHub",
     loading: "Loading from GitHub\u2026",
     loaded: "Loaded from GitHub",
     saving: "Saving\u2026",
@@ -1111,7 +1137,7 @@ function renderGhStatus(){
     "auth-error": "GitHub token invalid \u2014 check Sync Settings",
     error: "Sync error \u2014 try Save again",
     ready: "Connected \u2014 no data saved yet",
-    unsaved: "Unsaved changes \u2014 tap Save to sync"
+    unsaved: "Unsaved changes"
   };
   /* once connected, unsaved local edits override the idle states, so it's
      clear this device has changes GitHub (and your other devices) lack */
@@ -1119,6 +1145,10 @@ function renderGhStatus(){
   var warn = ["not-connected","auth-error","error","unsaved"].indexOf(shown) !== -1;
   var ok = shown === "saved" || shown === "loaded";
   node.textContent = copy[shown] || copy["not-connected"];
+  /* once connected, the GitHub status says it all; the local "Saved" time
+     only shows when there's no sync */
+  var localInd = el("save-indicator");
+  if (localInd) localInd.hidden = ghConfigured();
   node.className = "sync-status" + (warn ? " warn" : "") + (ok ? " ok" : "");
   var saveBtn = el("gh-save-btn");
   if (saveBtn) saveBtn.disabled = !ghConfigured() || ghSync.saveInFlight;
@@ -2775,6 +2805,9 @@ function renderScenarioTabs(){
   var bar = el("scenario-tabs");
   if (!bar) return;
   bar.innerHTML = "";
+  var seg = document.createElement("div");
+  seg.className = "scenario-seg";
+  bar.appendChild(seg);
   workspace.scenarios.forEach(function(sc){
     var isActive = sc.id === workspace.activeId;
     var tab = document.createElement("div");
@@ -2801,7 +2834,7 @@ function renderScenarioTabs(){
       });
       tab.appendChild(more);
     }
-    bar.appendChild(tab);
+    seg.appendChild(tab);
   });
   var add = document.createElement("button");
   add.type = "button";
@@ -2822,6 +2855,22 @@ document.addEventListener("click", function(e){
   if (m && !m.hidden && !m.contains(e.target)) closeScenarioMenu();
 });
 document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeScenarioMenu(); });
+
+/* toolbar "..." menu: Sync settings / Export / Import (their own click
+   handlers are bound in bindStatic; picking one also closes the menu) */
+function setMoreMenu(open){
+  el("more-menu").hidden = !open;
+  el("more-btn").setAttribute("aria-expanded", open ? "true" : "false");
+}
+el("more-btn").addEventListener("click", function(e){
+  e.stopPropagation();
+  setMoreMenu(el("more-menu").hidden);
+});
+el("more-menu").addEventListener("click", function(){ setMoreMenu(false); });
+document.addEventListener("click", function(e){
+  if (!el("more-menu").hidden && !el("more-menu").contains(e.target)) setMoreMenu(false);
+});
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") setMoreMenu(false); });
 
 /* claude.use only exists inside a Claude Artifact runtime; guard it so
    Export backup's "downloads" capability check just no-ops elsewhere,

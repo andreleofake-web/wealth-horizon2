@@ -1,6 +1,6 @@
 {
   "meta": {
-    "asOf": "2026-10-25"
+    "asOf": "2026-10-29"
   },
   "income": {
     "pensionVA": 8700,
@@ -89,8 +89,8 @@
     {
       "id": "0j4hq6bikk3",
       "name": "Fidelity Salesforce 401k",
-      "current": 13830,
-      "previous": 1830,
+      "current": 15200,
+      "previous": 13830,
       "liquid": false
     }
   ],
@@ -165,7 +165,7 @@
       "name": "Main",
       "state": {
         "meta": {
-          "asOf": "2026-10-25"
+          "asOf": "2026-10-29"
         },
         "income": {
           "pensionVA": 8700,
@@ -254,8 +254,8 @@
           {
             "id": "0j4hq6bikk3",
             "name": "Fidelity Salesforce 401k",
-            "current": 13830,
-            "previous": 1830,
+            "current": 15200,
+            "previous": 13830,
             "liquid": false
           }
         ],
@@ -331,7 +331,7 @@
       "name": "SD move",
       "state": {
         "meta": {
-          "asOf": "2026-10-25"
+          "asOf": "2026-10-29"
         },
         "income": {
           "pensionVA": 8700,

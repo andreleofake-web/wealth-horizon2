@@ -68,8 +68,8 @@
     {
       "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 17900,
-      "previous": 17800,
+      "current": 17930,
+      "previous": 17900,
       "liquid": true
     },
     {
@@ -82,8 +82,8 @@
     {
       "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 264800,
-      "previous": 263100,
+      "current": 264750,
+      "previous": 264800,
       "liquid": false
     },
     {
@@ -95,11 +95,11 @@
     }
   ],
   "accountsGroups": {
-    "liquidExpanded": false,
+    "liquidExpanded": true,
     "nonLiquidExpanded": true
   },
   "travelFund": {
-    "currentAmount": 3004,
+    "currentAmount": 3750,
     "monthlyContribution": 1500,
     "annualRatePct": 3.25,
     "spendFractionPct": 50
@@ -233,8 +233,8 @@
           {
             "id": "elqdxxgikk3",
             "name": "Acorns",
-            "current": 17900,
-            "previous": 17800,
+            "current": 17930,
+            "previous": 17900,
             "liquid": true
           },
           {
@@ -247,8 +247,8 @@
           {
             "id": "n9vauu7ikk3",
             "name": "TSP Combine Roth/Traditional",
-            "current": 264800,
-            "previous": 263100,
+            "current": 264750,
+            "previous": 264800,
             "liquid": false
           },
           {
@@ -260,11 +260,11 @@
           }
         ],
         "accountsGroups": {
-          "liquidExpanded": false,
+          "liquidExpanded": true,
           "nonLiquidExpanded": true
         },
         "travelFund": {
-          "currentAmount": 3004,
+          "currentAmount": 3750,
           "monthlyContribution": 1500,
           "annualRatePct": 3.25,
           "spendFractionPct": 50

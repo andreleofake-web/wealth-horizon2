@@ -1,6 +1,6 @@
 {
   "meta": {
-    "asOf": "2026-10-29"
+    "asOf": "2026-10-30"
   },
   "income": {
     "pensionVA": 8700,
@@ -61,15 +61,15 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 314700,
-      "previous": 315500,
+      "current": 319200,
+      "previous": 319000,
       "liquid": true
     },
     {
       "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 17930,
-      "previous": 17900,
+      "current": 17900,
+      "previous": 17930,
       "liquid": true
     },
     {
@@ -165,7 +165,7 @@
       "name": "Main",
       "state": {
         "meta": {
-          "asOf": "2026-10-29"
+          "asOf": "2026-10-30"
         },
         "income": {
           "pensionVA": 8700,
@@ -226,15 +226,15 @@
           {
             "id": "5972fgvikk3",
             "name": "Robinhood",
-            "current": 314700,
-            "previous": 315500,
+            "current": 319200,
+            "previous": 319000,
             "liquid": true
           },
           {
             "id": "elqdxxgikk3",
             "name": "Acorns",
-            "current": 17930,
-            "previous": 17900,
+            "current": 17900,
+            "previous": 17930,
             "liquid": true
           },
           {
@@ -331,7 +331,7 @@
       "name": "SD move",
       "state": {
         "meta": {
-          "asOf": "2026-10-29"
+          "asOf": "2026-10-30"
         },
         "income": {
           "pensionVA": 8700,

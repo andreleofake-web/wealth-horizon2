@@ -61,15 +61,15 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 319200,
-      "previous": 319000,
+      "current": 316400,
+      "previous": 319200,
       "liquid": true
     },
     {
       "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 17900,
-      "previous": 17930,
+      "current": 17625,
+      "previous": 17900,
       "liquid": true
     },
     {
@@ -226,15 +226,15 @@
           {
             "id": "5972fgvikk3",
             "name": "Robinhood",
-            "current": 319200,
-            "previous": 319000,
+            "current": 316400,
+            "previous": 319200,
             "liquid": true
           },
           {
             "id": "elqdxxgikk3",
             "name": "Acorns",
-            "current": 17900,
-            "previous": 17930,
+            "current": 17625,
+            "previous": 17900,
             "liquid": true
           },
           {

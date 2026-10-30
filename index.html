@@ -710,7 +710,7 @@ footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-
         <div class="card-title">Annual pace</div>
         <div class="payperiod">
           <div class="row"><span class="lbl">Annual amount invested</span><span class="val mono" id="inv-annual">$0</span></div>
-          <div class="row"><span class="lbl">Months remaining this year</span><span class="val mono" id="inv-months-left">0</span></div>
+          <div class="row"><span class="lbl">Paychecks left this year</span><span class="val mono" id="inv-paychecks-left">0</span></div>
           <hr>
           <div class="remain"><span class="lbl">Left to invest this year</span><span class="val mono" id="inv-left-year">$0</span></div>
         </div>
@@ -1451,6 +1451,49 @@ function asOfParts(){
   return { year: d.getFullYear(), month: d.getMonth() + 1 };
 }
 
+/* ---------- paychecks left this year ----------
+   Pay is in arrears, so a year's money is the pay for that year's work:
+   the 15th checks Jan 15 - Dec 15, and the 1st-of-month checks Feb 1 -
+   Jan 1 of the next year (each 1st pays the month before). A payday on a
+   weekend or bank holiday is deposited the business day before (so the
+   Jan 1 check always lands by Dec 31), and a check counts as received
+   on the day it lands. Each check invests its own withholding plus half
+   the monthly line items (401(k) etc. come out of every paycheck). */
+function nthWeekday(year, month0, weekday, n){
+  var d = new Date(year, month0, 1);
+  var offset = (weekday - d.getDay() + 7) % 7;
+  return new Date(year, month0, 1 + offset + (n - 1) * 7);
+}
+/* federal bank holidays that can fall on the 1st or 15th */
+function isBankHoliday(d){
+  var y = d.getFullYear(), m = d.getMonth(), day = d.getDate();
+  if (m === 0 && day === 1) return true;                                  // New Year's Day
+  var sameDay = function(h){ return h.getMonth() === m && h.getDate() === day; };
+  return sameDay(nthWeekday(y, 0, 1, 3))   // Martin Luther King Jr. Day
+      || sameDay(nthWeekday(y, 1, 1, 3))   // Presidents' Day
+      || sameDay(nthWeekday(y, 8, 1, 1));  // Labor Day
+}
+function depositDate(year, month0, day){
+  var d = new Date(year, month0, day);
+  while (d.getDay() === 0 || d.getDay() === 6 || isBankHoliday(d)) d.setDate(d.getDate() - 1);
+  return d;
+}
+function paychecksLeftThisYear(lineTotal){
+  var today = new Date(state.meta.asOf + "T00:00:00");
+  if (isNaN(today.getTime())){ today = new Date(); today.setHours(0,0,0,0); }
+  /* the Jan 1 check always lands by Dec 31, so the calendar year of
+     "today" is always the pay year still being collected */
+  var year = today.getFullYear();
+  var perFirst = num(state.withhold.pay1Invest) + lineTotal / 2;
+  var perFifteenth = num(state.withhold.pay2Invest) + lineTotal / 2;
+  var count = 0, amount = 0;
+  for (var m = 0; m < 12; m++){
+    if (depositDate(year, m, 15) > today){ count++; amount += perFifteenth; }
+    if (depositDate(year, m + 1, 1) > today){ count++; amount += perFirst; }  // month 12 rolls to Jan 1 next year
+  }
+  return { count: count, amount: amount };
+}
+
 /* ---------- derived computations ---------- */
 function computeAll(){
   var c = {};
@@ -1470,9 +1513,9 @@ function computeAll(){
   c.totalMonthlyInvestment = c.paycheckInvest + c.investmentsLineTotal;
   c.annualInvestment = c.totalMonthlyInvestment * 12;
 
-  var ap = asOfParts();
-  c.monthsRemainingThisYear = Math.max(0, 12 - ap.month);
-  c.investmentLeftThisYear = (c.annualInvestment / 12) * c.monthsRemainingThisYear;
+  var left = paychecksLeftThisYear(c.investmentsLineTotal);
+  c.paychecksLeftThisYear = left.count;
+  c.investmentLeftThisYear = left.amount;
 
   c.accountsTotalCurrent = state.accounts.reduce(function(s,a){ return s + num(a.current); }, 0);
   c.accountsTotalPrevious = state.accounts.reduce(function(s,a){ return s + num(a.previous); }, 0);
@@ -1619,7 +1662,7 @@ function render(){
 
   renderInvestments(c);
   el("inv-annual").textContent = money(c.annualInvestment);
-  el("inv-months-left").textContent = c.monthsRemainingThisYear;
+  el("inv-paychecks-left").textContent = c.paychecksLeftThisYear;
   el("inv-left-year").textContent = money(c.investmentLeftThisYear);
 
   renderAccounts(c);

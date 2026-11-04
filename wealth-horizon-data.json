@@ -1,6 +1,6 @@
 {
   "meta": {
-    "asOf": "2026-10-30"
+    "asOf": "2026-11-04"
   },
   "income": {
     "pensionVA": 8700,
@@ -39,7 +39,7 @@
     },
     {
       "id": "ejtyt0hikk3",
-      "name": "Travel fund - Fidelity",
+      "name": "Travel Fund - Fidelity",
       "amount": 1500
     }
   ],
@@ -61,36 +61,36 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 316400,
-      "previous": 319200,
+      "current": 319954,
+      "previous": 316400,
       "liquid": true
     },
     {
       "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 17625,
-      "previous": 17900,
+      "current": 17930,
+      "previous": 17625,
       "liquid": true
     },
     {
       "id": "mh3194oikk3",
       "name": "Vanguard Roth IRA",
-      "current": 157300,
-      "previous": 156550,
+      "current": 154375,
+      "previous": 157300,
       "liquid": false
     },
     {
       "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 264750,
-      "previous": 264800,
+      "current": 259640,
+      "previous": 264750,
       "liquid": false
     },
     {
       "id": "0j4hq6bikk3",
       "name": "Fidelity Salesforce 401k",
-      "current": 15200,
-      "previous": 13830,
+      "current": 15050,
+      "previous": 15200,
       "liquid": false
     }
   ],
@@ -99,7 +99,7 @@
     "nonLiquidExpanded": true
   },
   "travelFund": {
-    "currentAmount": 3750,
+    "currentAmount": 3760,
     "monthlyContribution": 1500,
     "annualRatePct": 3.25,
     "spendFractionPct": 50
@@ -165,7 +165,7 @@
       "name": "Main",
       "state": {
         "meta": {
-          "asOf": "2026-10-30"
+          "asOf": "2026-11-04"
         },
         "income": {
           "pensionVA": 8700,
@@ -204,7 +204,7 @@
           },
           {
             "id": "ejtyt0hikk3",
-            "name": "Travel fund - Fidelity",
+            "name": "Travel Fund - Fidelity",
             "amount": 1500
           }
         ],
@@ -226,36 +226,36 @@
           {
             "id": "5972fgvikk3",
             "name": "Robinhood",
-            "current": 316400,
-            "previous": 319200,
+            "current": 319954,
+            "previous": 316400,
             "liquid": true
           },
           {
             "id": "elqdxxgikk3",
             "name": "Acorns",
-            "current": 17625,
-            "previous": 17900,
+            "current": 17930,
+            "previous": 17625,
             "liquid": true
           },
           {
             "id": "mh3194oikk3",
             "name": "Vanguard Roth IRA",
-            "current": 157300,
-            "previous": 156550,
+            "current": 154375,
+            "previous": 157300,
             "liquid": false
           },
           {
             "id": "n9vauu7ikk3",
             "name": "TSP Combine Roth/Traditional",
-            "current": 264750,
-            "previous": 264800,
+            "current": 259640,
+            "previous": 264750,
             "liquid": false
           },
           {
             "id": "0j4hq6bikk3",
             "name": "Fidelity Salesforce 401k",
-            "current": 15200,
-            "previous": 13830,
+            "current": 15050,
+            "previous": 15200,
             "liquid": false
           }
         ],
@@ -264,7 +264,7 @@
           "nonLiquidExpanded": true
         },
         "travelFund": {
-          "currentAmount": 3750,
+          "currentAmount": 3760,
           "monthlyContribution": 1500,
           "annualRatePct": 3.25,
           "spendFractionPct": 50
@@ -331,7 +331,7 @@
       "name": "SD move",
       "state": {
         "meta": {
-          "asOf": "2026-10-30"
+          "asOf": "2026-11-04"
         },
         "income": {
           "pensionVA": 8700,

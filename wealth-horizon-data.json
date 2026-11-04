@@ -142,19 +142,19 @@
       {
         "id": "198v8y8ikk3",
         "year": 2028,
-        "amount": 1255000,
+        "amount": 1245000,
         "actual": null
       },
       {
         "id": "nf63a8oikk3",
         "year": 2029,
-        "amount": 1500000,
+        "amount": 1475000,
         "actual": null
       },
       {
         "id": "2t0qbixikk3",
         "year": 2030,
-        "amount": 1765000,
+        "amount": 1750000,
         "actual": null
       }
     ]
@@ -307,19 +307,19 @@
             {
               "id": "198v8y8ikk3",
               "year": 2028,
-              "amount": 1255000,
+              "amount": 1245000,
               "actual": null
             },
             {
               "id": "nf63a8oikk3",
               "year": 2029,
-              "amount": 1500000,
+              "amount": 1475000,
               "actual": null
             },
             {
               "id": "2t0qbixikk3",
               "year": 2030,
-              "amount": 1765000,
+              "amount": 1750000,
               "actual": null
             }
           ]

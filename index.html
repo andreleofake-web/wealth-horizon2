@@ -1478,20 +1478,28 @@ function depositDate(year, month0, day){
   while (d.getDay() === 0 || d.getDay() === 6 || isBankHoliday(d)) d.setDate(d.getDate() - 1);
   return d;
 }
-function paychecksLeftThisYear(lineTotal){
+function asOfDate(){
   var today = new Date(state.meta.asOf + "T00:00:00");
   if (isNaN(today.getTime())){ today = new Date(); today.setHours(0,0,0,0); }
-  /* the Jan 1 check always lands by Dec 31, so the calendar year of
-     "today" is always the pay year still being collected */
-  var year = today.getFullYear();
+  return today;
+}
+/* every paycheck of a pay year, with its deposit date and how much it
+   invests. The Jan 1 check always lands by Dec 31, so a pay year's checks
+   all land within that calendar year. */
+function payYearChecks(year, lineTotal){
   var perFirst = num(state.withhold.pay1Invest) + lineTotal / 2;
   var perFifteenth = num(state.withhold.pay2Invest) + lineTotal / 2;
-  var count = 0, amount = 0;
+  var checks = [];
   for (var m = 0; m < 12; m++){
-    if (depositDate(year, m, 15) > today){ count++; amount += perFifteenth; }
-    if (depositDate(year, m + 1, 1) > today){ count++; amount += perFirst; }  // month 12 rolls to Jan 1 next year
+    checks.push({ date: depositDate(year, m, 15), amount: perFifteenth });
+    checks.push({ date: depositDate(year, m + 1, 1), amount: perFirst });  // month 12 rolls to Jan 1 next year
   }
-  return { count: count, amount: amount };
+  return checks;
+}
+function paychecksLeftThisYear(lineTotal){
+  var today = asOfDate();
+  var left = payYearChecks(today.getFullYear(), lineTotal).filter(function(ck){ return ck.date > today; });
+  return { count: left.length, amount: left.reduce(function(s, ck){ return s + ck.amount; }, 0) };
 }
 
 /* ---------- derived computations ---------- */
@@ -1547,21 +1555,46 @@ function nestEggProjection(){
     return (y >= ap.year && y <= ap.year + 60) ? Math.max(m, y) : m;
   }, 0);
   var years = lastGoalYear ? lastGoalYear - ap.year + 1 : 5;
-  var monthlyInvest = (num(state.withhold.pay1Invest) + num(state.withhold.pay2Invest) + investmentsLineTotal());
-  var current = state.accounts.reduce(function(s,a){ return s + num(a.current); }, 0);
+  var steps = nestEggSteps(ap.year + years - 1);
+  var series = steps.map(function(st){ return { year: st.year, balance: st.endBalance }; });
+  return { current: steps.length ? steps[0].startBalance : 0, currentYear: ap.year, currentMonth: ap.month, series: series };
+}
 
-  var series = [];
-  var nper1 = Math.max(12 - ap.month, 1);
-  var balance = futureValue((rateForYear(ap.year)/100)/12, nper1, monthlyInvest, current, 0);
-  series.push({ year: ap.year, balance: balance });
-
-  for (var i = 1; i < years; i++){
-    var y = ap.year + i;
-    balance = futureValue((rateForYear(y)/100)/12, 12, monthlyInvest, balance, 0);
-    series.push({ year: y, balance: balance });
+/* Year-end (Dec 31) balances from today through lastYear. Each year: the
+   balance grows at that year's rate (or override), compounded monthly —
+   this year only for the days left until Dec 31 — and each paycheck's
+   investment is added on its deposit date and grows from then to Dec 31.
+   This year counts only the paychecks still to land (same schedule as
+   the Annual pace card); later years count all 24. */
+function growthFactor(ratePct, from, to){
+  var months = (to - from) / 86400000 * 12 / 365;
+  return Math.pow(1 + ratePct / 100 / 12, months);
+}
+function nestEggSteps(lastYear){
+  var today = asOfDate();
+  var firstYear = today.getFullYear();
+  var lineTotal = investmentsLineTotal();
+  var balance = state.accounts.reduce(function(s,a){ return s + num(a.current); }, 0);
+  var steps = [];
+  for (var y = firstYear; y <= lastYear && steps.length < 61; y++){
+    var ratePct = rateForYear(y);
+    var yearEnd = new Date(y + 1, 0, 1);
+    var partial = y === firstYear;
+    var start = balance;
+    balance *= partial ? growthFactor(ratePct, today, yearEnd) : Math.pow(1 + ratePct / 100 / 12, 12);
+    var checks = payYearChecks(y, lineTotal).filter(function(ck){ return !partial || ck.date > today; });
+    var contributed = 0;
+    checks.forEach(function(ck){
+      contributed += ck.amount;
+      balance += ck.amount * growthFactor(ratePct, ck.date, yearEnd);
+    });
+    steps.push({
+      year: y, startBalance: start, endBalance: balance, ratePct: ratePct, partial: partial,
+      checks: checks.length, contributed: contributed,
+      overridden: !!state.nestEgg.rateOverrides.filter(function(o){ return num(o.year) === y; })[0]
+    });
   }
-
-  return { current: current, currentYear: ap.year, currentMonth: ap.month, series: series };
+  return steps;
 }
 
 /* Monthly-resolution projection — each series entry is the LAST DAY of a
@@ -2245,27 +2278,12 @@ function explainGoalCalculation(goal){
     result.compareValue = result.actual;
   } else {
     var ap = asOfParts();
-    var monthlyInvest = (num(state.withhold.pay1Invest) + num(state.withhold.pay2Invest) + investmentsLineTotal());
-    var current = state.accounts.reduce(function(s,a){ return s + num(a.current); }, 0);
-
-    var steps = [];
-    var nper1 = Math.max(12 - ap.month, 1);
-    var rate1 = rateForYear(ap.year);
-    var balance = futureValue((rate1/100)/12, nper1, monthlyInvest, current, 0);
-    steps.push({ year: ap.year, months: nper1, startBalance: current, endBalance: balance, partial: nper1 < 12, ratePct: rate1, overridden: !!state.nestEgg.rateOverrides.filter(function(o){ return num(o.year) === ap.year; })[0] });
-
-    var y = ap.year;
-    while (y < targetYear && steps.length < 30){
-      var priorBalance = balance;
-      y += 1;
-      var ratePct = rateForYear(y);
-      balance = futureValue((ratePct/100)/12, 12, monthlyInvest, balance, 0);
-      steps.push({ year: y, months: 12, startBalance: priorBalance, endBalance: balance, partial: false, ratePct: ratePct, overridden: !!state.nestEgg.rateOverrides.filter(function(o){ return num(o.year) === y; })[0] });
-    }
-
+    var steps = nestEggSteps(Math.max(targetYear, ap.year));
+    var lineTotal = investmentsLineTotal();
     result.steps = steps;
-    result.monthlyInvest = monthlyInvest;
-    result.compareValue = balance;
+    result.perFirst = num(state.withhold.pay1Invest) + lineTotal / 2;
+    result.perFifteenth = num(state.withhold.pay2Invest) + lineTotal / 2;
+    result.compareValue = steps[steps.length - 1].endBalance;
   }
 
   result.delta = result.compareValue - target;
@@ -2283,18 +2301,18 @@ function buildFormulaHTML(result){
     html += '<div class="formula-note">Recorded by you \u2014 this year is resolved, so the comparison uses your actual balance rather than a projection.</div>';
   } else {
     html += '<div class="formula-divider"></div>';
-    html += '<div class="formula-eq">FV = PV \u00D7 (1+r)^n + PMT \u00D7 [(1+r)^n - 1] / r</div>';
-    html += '<div class="formula-vars">PMT = ' + money(result.monthlyInvest) + '/mo &middot; r = rate below \u00F7 12, compounded monthly</div>';
+    html += '<div class="formula-eq">End = Start grown to Dec 31 + each paycheck grown from its deposit date to Dec 31</div>';
+    html += '<div class="formula-vars">Per paycheck: ' + money(result.perFirst) + ' (1st) &middot; ' + money(result.perFifteenth) + ' (15th) &middot; rate compounded monthly</div>';
     html += '<div class="formula-steps">';
-    html += '<div class="formula-step-head"><span>Year</span><span>Mon.</span><span>Rate</span><span>Start</span><span>End</span></div>';
+    html += '<div class="formula-step-head"><span>Year</span><span>Checks</span><span>Rate</span><span>Start</span><span>End</span></div>';
     var anyOverridden = false;
     result.steps.forEach(function(s){
       if (s.overridden) anyOverridden = true;
-      html += '<div class="formula-step"><span>' + s.year + (s.partial ? "*" : "") + '</span><span>' + (s.partial ? s.months : "") + '</span><span' + (s.overridden ? ' class="ovr"' : '') + '>' + s.ratePct + '%' + (s.overridden ? "\u2020" : "") + '</span><span>' + moneyCompact(s.startBalance) + '</span><span>' + moneyCompact(s.endBalance) + '</span></div>';
+      html += '<div class="formula-step"><span>' + s.year + (s.partial ? "*" : "") + '</span><span>' + s.checks + '</span><span' + (s.overridden ? ' class="ovr"' : '') + '>' + s.ratePct + '%' + (s.overridden ? "\u2020" : "") + '</span><span>' + moneyCompact(s.startBalance) + '</span><span>' + moneyCompact(s.endBalance) + '</span></div>';
     });
     html += '</div>';
     var notes = [];
-    if (result.steps[0].partial) notes.push("* partial year \u2014 months remaining from today (Dec 31 minus the current month)");
+    if (result.steps[0].partial) notes.push("* rest of this year \u2014 growth from today to Dec 31, plus the paychecks still to land");
     if (anyOverridden) notes.push("\u2020 year-specific rate override");
     if (notes.length) html += '<div class="formula-note">' + notes.join("<br>") + '</div>';
   }

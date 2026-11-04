@@ -90,7 +90,7 @@
       "id": "0j4hq6bikk3",
       "name": "Fidelity Salesforce 401k",
       "current": 15050,
-      "previous": 15200,
+      "previous": 25050,
       "liquid": false
     }
   ],
@@ -255,7 +255,7 @@
             "id": "0j4hq6bikk3",
             "name": "Fidelity Salesforce 401k",
             "current": 15050,
-            "previous": 15200,
+            "previous": 25050,
             "liquid": false
           }
         ],

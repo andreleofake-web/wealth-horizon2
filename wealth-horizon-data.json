@@ -61,29 +61,29 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 319954,
-      "previous": 316400,
+      "current": 318925,
+      "previous": 319954,
       "liquid": true
     },
     {
       "id": "elqdxxgikk3",
       "name": "Acorns",
-      "current": 17930,
-      "previous": 17625,
+      "current": 17900,
+      "previous": 17930,
       "liquid": true
     },
     {
       "id": "mh3194oikk3",
       "name": "Vanguard Roth IRA",
-      "current": 154375,
-      "previous": 157300,
+      "current": 156750,
+      "previous": 154375,
       "liquid": false
     },
     {
       "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 259640,
-      "previous": 264750,
+      "current": 263450,
+      "previous": 259640,
       "liquid": false
     },
     {
@@ -226,29 +226,29 @@
           {
             "id": "5972fgvikk3",
             "name": "Robinhood",
-            "current": 319954,
-            "previous": 316400,
+            "current": 318925,
+            "previous": 319954,
             "liquid": true
           },
           {
             "id": "elqdxxgikk3",
             "name": "Acorns",
-            "current": 17930,
-            "previous": 17625,
+            "current": 17900,
+            "previous": 17930,
             "liquid": true
           },
           {
             "id": "mh3194oikk3",
             "name": "Vanguard Roth IRA",
-            "current": 154375,
-            "previous": 157300,
+            "current": 156750,
+            "previous": 154375,
             "liquid": false
           },
           {
             "id": "n9vauu7ikk3",
             "name": "TSP Combine Roth/Traditional",
-            "current": 259640,
-            "previous": 264750,
+            "current": 263450,
+            "previous": 259640,
             "liquid": false
           },
           {

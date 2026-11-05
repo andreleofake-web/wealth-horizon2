@@ -8,8 +8,8 @@
     "salary2nd": 3960
   },
   "withhold": {
-    "pay1Invest": 8900,
-    "pay2Invest": 200
+    "pay1Invest": 9000,
+    "pay2Invest": 300
   },
   "expenses": [
     {
@@ -173,8 +173,8 @@
           "salary2nd": 3960
         },
         "withhold": {
-          "pay1Invest": 8900,
-          "pay2Invest": 200
+          "pay1Invest": 9000,
+          "pay2Invest": 300
         },
         "expenses": [
           {

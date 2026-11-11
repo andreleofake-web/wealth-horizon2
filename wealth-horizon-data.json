@@ -335,8 +335,8 @@
         },
         "income": {
           "pensionVA": 8700,
-          "salary1st": 5500,
-          "salary2nd": 5500
+          "salary1st": 5230,
+          "salary2nd": 5230
         },
         "withhold": {
           "pay1Invest": 9200,
@@ -435,7 +435,7 @@
           "nonLiquidExpanded": false
         },
         "travelFund": {
-          "currentAmount": 3004,
+          "currentAmount": 3760,
           "monthlyContribution": 1500,
           "annualRatePct": 3.25,
           "spendFractionPct": 50

@@ -61,8 +61,8 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 318000,
-      "previous": 320500,
+      "current": 320000,
+      "previous": 318000,
       "liquid": true
     },
     {
@@ -226,8 +226,8 @@
           {
             "id": "5972fgvikk3",
             "name": "Robinhood",
-            "current": 318000,
-            "previous": 320500,
+            "current": 320000,
+            "previous": 318000,
             "liquid": true
           },
           {

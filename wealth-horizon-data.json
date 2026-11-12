@@ -1,6 +1,6 @@
 {
   "meta": {
-    "asOf": "2026-11-11"
+    "asOf": "2026-11-12"
   },
   "income": {
     "pensionVA": 8700,
@@ -61,8 +61,8 @@
     {
       "id": "5972fgvikk3",
       "name": "Robinhood",
-      "current": 320500,
-      "previous": 321000,
+      "current": 318000,
+      "previous": 320500,
       "liquid": true
     },
     {
@@ -75,15 +75,15 @@
     {
       "id": "mh3194oikk3",
       "name": "Vanguard Roth IRA",
-      "current": 154275,
-      "previous": 156750,
+      "current": 155900,
+      "previous": 154275,
       "liquid": false
     },
     {
       "id": "n9vauu7ikk3",
       "name": "TSP Combine Roth/Traditional",
-      "current": 263450,
-      "previous": 259640,
+      "current": 258930,
+      "previous": 263450,
       "liquid": false
     },
     {
@@ -165,7 +165,7 @@
       "name": "Main",
       "state": {
         "meta": {
-          "asOf": "2026-11-11"
+          "asOf": "2026-11-12"
         },
         "income": {
           "pensionVA": 8700,
@@ -226,8 +226,8 @@
           {
             "id": "5972fgvikk3",
             "name": "Robinhood",
-            "current": 320500,
-            "previous": 321000,
+            "current": 318000,
+            "previous": 320500,
             "liquid": true
           },
           {
@@ -240,15 +240,15 @@
           {
             "id": "mh3194oikk3",
             "name": "Vanguard Roth IRA",
-            "current": 154275,
-            "previous": 156750,
+            "current": 155900,
+            "previous": 154275,
             "liquid": false
           },
           {
             "id": "n9vauu7ikk3",
             "name": "TSP Combine Roth/Traditional",
-            "current": 263450,
-            "previous": 259640,
+            "current": 258930,
+            "previous": 263450,
             "liquid": false
           },
           {
@@ -331,7 +331,7 @@
       "name": "SD move",
       "state": {
         "meta": {
-          "asOf": "2026-11-11"
+          "asOf": "2026-11-12"
         },
         "income": {
           "pensionVA": 8700,

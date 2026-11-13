@@ -1,6 +1,6 @@
 {
   "meta": {
-    "asOf": "2026-11-12"
+    "asOf": "2026-11-13"
   },
   "income": {
     "pensionVA": 8700,
@@ -89,8 +89,8 @@
     {
       "id": "0j4hq6bikk3",
       "name": "Fidelity Salesforce 401k",
-      "current": 15075,
-      "previous": 15050,
+      "current": 16475,
+      "previous": 15075,
       "liquid": false
     }
   ],
@@ -99,7 +99,7 @@
     "nonLiquidExpanded": true
   },
   "travelFund": {
-    "currentAmount": 3760,
+    "currentAmount": 4510,
     "monthlyContribution": 1500,
     "annualRatePct": 3.25,
     "spendFractionPct": 50
@@ -165,7 +165,7 @@
       "name": "Main",
       "state": {
         "meta": {
-          "asOf": "2026-11-12"
+          "asOf": "2026-11-13"
         },
         "income": {
           "pensionVA": 8700,
@@ -254,8 +254,8 @@
           {
             "id": "0j4hq6bikk3",
             "name": "Fidelity Salesforce 401k",
-            "current": 15075,
-            "previous": 15050,
+            "current": 16475,
+            "previous": 15075,
             "liquid": false
           }
         ],
@@ -264,7 +264,7 @@
           "nonLiquidExpanded": true
         },
         "travelFund": {
-          "currentAmount": 3760,
+          "currentAmount": 4510,
           "monthlyContribution": 1500,
           "annualRatePct": 3.25,
           "spendFractionPct": 50
@@ -331,7 +331,7 @@
       "name": "SD move",
       "state": {
         "meta": {
-          "asOf": "2026-11-12"
+          "asOf": "2026-11-13"
         },
         "income": {
           "pensionVA": 8700,
